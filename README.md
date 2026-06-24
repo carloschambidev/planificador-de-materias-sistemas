@@ -1,5 +1,11 @@
 # Planificador de Materias UTN FRBA
 
+## Link de la página
+
+Accede al sitio por este link:  
+https://carloschambidev.github.io/planificador-de-materias-sistemas/ 
+
+
 ## Propósito
 
 Esta aplicación web sirve para planificar y seguir el avance de la carrera de Ingeniería en Sistemas de Información de la UTN FRBA. Permite visualizar las materias del plan de estudios, registrar su estado de avance y comprender fácilmente cuáles materias están habilitadas o bloqueadas por correlatividades.
