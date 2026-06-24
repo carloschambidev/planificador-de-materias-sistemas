@@ -13,7 +13,6 @@ interface Props {
     promocionadas: number;
     cursando: number;
     regularizadas: number;
-    debenFinal: number;
     completadas: number;
     porcentaje: number;
     restantes: number;

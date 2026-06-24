@@ -91,7 +91,6 @@ export function useCorrelatividades(): {
       'no-iniciada',
       'cursando',
       'regularizada',
-      'debe-final',
       'aprobada',
       'promocionada'
     ];
@@ -124,9 +123,6 @@ export function useEstadisticas(materias: MateriaCompleta[]) {
     const regularizadas = materias.filter(
       (m) => m.estadoDinamico.estado === 'regularizada'
     ).length;
-    const debenFinal = materias.filter(
-      (m) => m.estadoDinamico.estado === 'debe-final'
-    ).length;
 
     const completadas = aprobadas + promocionadas;
     const porcentaje = Math.round((completadas / total) * 100);
@@ -138,7 +134,6 @@ export function useEstadisticas(materias: MateriaCompleta[]) {
       promocionadas,
       cursando,
       regularizadas,
-      debenFinal,
       completadas,
       porcentaje,
       restantes,

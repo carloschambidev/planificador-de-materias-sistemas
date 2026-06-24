@@ -10,7 +10,6 @@ export type EstadoMateria =
   | 'no-iniciada'
   | 'cursando'
   | 'regularizada'
-  | 'debe-final'
   | 'aprobada'
   | 'promocionada';
 
@@ -93,15 +92,6 @@ export const ESTADO_CONFIG: Record<EstadoMateria, {
     glowColor: 'rgba(245,158,11,0.25)',
     icon: '◈',
   },
-  'debe-final': {
-    label: 'Debe Final',
-    color: '#EA580C',
-    bgColor: 'bg-orange-900/40',
-    borderColor: 'border-orange-500',
-    textColor: 'text-orange-300',
-    glowColor: 'rgba(249,115,22,0.25)',
-    icon: '◇',
-  },
   aprobada: {
     label: 'Aprobada',
     color: '#16A34A',
@@ -142,8 +132,7 @@ export const BLOQUEADA_CONFIG = {
 export const TRANSICIONES_VALIDAS: Record<EstadoMateria, EstadoMateria[]> = {
   'no-iniciada': ['cursando'],
   cursando: ['regularizada', 'aprobada', 'promocionada', 'no-iniciada'],
-  regularizada: ['debe-final', 'aprobada', 'cursando'],
-  'debe-final': ['aprobada', 'regularizada'],
+  regularizada: ['aprobada', 'cursando'],
   aprobada: ['promocionada', 'regularizada'],
   promocionada: ['aprobada'],
 };
@@ -152,7 +141,7 @@ export const TRANSICIONES_VALIDAS: Record<EstadoMateria, EstadoMateria[]> = {
  * Determina si un estado cuenta como "regularizada" para correlatividades.
  */
 export function cuentaComoRegularizada(estado: EstadoMateria): boolean {
-  return ['regularizada', 'debe-final', 'aprobada', 'promocionada'].includes(estado);
+  return ['regularizada', 'aprobada', 'promocionada'].includes(estado);
 }
 
 /**

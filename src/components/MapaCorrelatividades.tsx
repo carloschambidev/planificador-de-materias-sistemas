@@ -29,7 +29,6 @@ const CARD_ESTADO: Record<string, { bg: string; border: string; text: string; ba
   'no-iniciada':    { bg: '#FFFFFF', border: '#E5E7EB', text: '#374151', badge: '#F3F4F6', badgeText: '#6B7280' },
   cursando:         { bg: '#EFF6FF', border: '#3B82F6', text: '#1E40AF', badge: '#3B82F6', badgeText: '#fff' },
   regularizada:     { bg: '#FFFBEB', border: '#F59E0B', text: '#92400E', badge: '#F59E0B', badgeText: '#fff' },
-  'debe-final':     { bg: '#FFF7ED', border: '#F97316', text: '#9A3412', badge: '#F97316', badgeText: '#fff' },
   aprobada:         { bg: '#F0FDF4', border: '#22C55E', text: '#14532D', badge: '#22C55E', badgeText: '#fff' },
   promocionada:     { bg: '#F5F3FF', border: '#8B5CF6', text: '#4C1D95', badge: '#8B5CF6', badgeText: '#fff' },
   bloqueada:        { bg: '#E5E7EB', border: '#9CA3AF', text: '#4B5563', badge: '#D1D5DB', badgeText: '#374151' },
@@ -315,7 +314,6 @@ export function MapaCorrelatividades({ materias }: Props) {
           { key: 'no-iniciada', label: 'No iniciada' },
           { key: 'cursando', label: 'Cursando' },
           { key: 'regularizada', label: 'Regularizada' },
-          { key: 'debe-final', label: 'Debe Final' },
           { key: 'aprobada', label: 'Aprobada' },
           { key: 'promocionada', label: 'Promocionada' },
         ].map(({ key, label }) => {
