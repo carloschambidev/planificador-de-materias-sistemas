@@ -139,7 +139,7 @@ export function MateriaModal({ materia, estadosDisponibles, onClose, onEditar }:
                 {estadosDisponibles.length === 0 ? (
                   <p className="text-sm text-gray-500 italic">No hay transiciones disponibles desde este estado.</p>
                 ) : (
-                  <div className="grid grid-cols-2 gap-2">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                     {estadosDisponibles.map((est) => {
                       const cfg = ESTADO_CONFIG[est];
                       return (

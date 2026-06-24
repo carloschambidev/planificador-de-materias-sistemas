@@ -37,7 +37,7 @@ export function NivelSection({ nivel, materias, onClickMateria }: Props) {
       className={`rounded-2xl border ${colors.border} bg-gradient-to-b ${colors.bg} p-5`}
     >
       {/* Encabezado del nivel */}
-      <div className="flex items-center justify-between mb-5">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0 mb-5">
         <div className="flex items-center gap-3">
           <div className={`w-1.5 h-8 rounded-full ${colors.accent}`} />
           <div>

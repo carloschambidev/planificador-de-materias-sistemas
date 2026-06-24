@@ -106,7 +106,7 @@ export default function App() {
               exit={{ opacity: 0, x: -20 }}
               transition={{ duration: 0.3 }}
             >
-              <div className="flex items-center justify-between mb-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-0 mb-4">
                 <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wider">
                   Mapa de Correlatividades
                 </h2>

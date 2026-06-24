@@ -72,7 +72,7 @@ export function EstadisticasPanel({ stats }: Props) {
         animate={{ opacity: 1, y: 0 }}
         className="p-5 rounded-2xl bg-gray-800/60 border border-gray-700/50 backdrop-blur-sm"
       >
-        <div className="flex items-center justify-between mb-3">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-0 mb-3">
           <div>
             <div className="flex items-center gap-2">
               <TrendingUp size={18} style={{ color: progressColor }} />
@@ -82,7 +82,7 @@ export function EstadisticasPanel({ stats }: Props) {
               {stats.completadas} de {total} materias completadas
             </p>
           </div>
-          <div className="text-right">
+          <div className="text-left sm:text-right">
             <span
               className="text-4xl font-black"
               style={{ color: progressColor }}
@@ -110,7 +110,7 @@ export function EstadisticasPanel({ stats }: Props) {
         </div>
 
         {/* Sub-stats */}
-        <div className="flex gap-4 mt-3 text-xs text-gray-500">
+        <div className="flex flex-wrap gap-2 sm:gap-4 mt-3 text-xs text-gray-500">
           <span>
             <span className="text-emerald-400 font-semibold">{aprobadas}</span> aprobadas
           </span>

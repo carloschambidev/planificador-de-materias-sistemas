@@ -76,7 +76,7 @@ export function Header({ vistaActual, onCambiarVista }: Props) {
   return (
     <header className="sticky top-0 z-40 border-b border-gray-800/80 bg-gray-950/90 backdrop-blur-xl">
       <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 py-3">
-        <div className="flex items-center justify-between gap-4">
+        <div className="flex flex-col sm:flex-row items-center sm:justify-between gap-4">
           {/* Logo */}
           <div className="flex items-center gap-3">
             <motion.div
