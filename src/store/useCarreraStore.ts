@@ -19,6 +19,7 @@ interface CarreraStore {
   setNombrePersonalizado: (id: string, nombre: string) => void;
   setDuracionPersonalizada: (id: string, duracion: DuracionMateria) => void;
   setNotas: (id: string, notas: string) => void;
+  asignarElectiva: (materiaSlotId: string, electivaId: string) => void;
   resetearTodo: () => void;
 
   /** Importar/Exportar */
@@ -78,6 +79,15 @@ export const useCarreraStore = create<CarreraStore>()(
           estadoMaterias: {
             ...s.estadoMaterias,
             [id]: { ...s.estadoMaterias[id], notasPersonales: notas },
+          },
+        }));
+      },
+
+      asignarElectiva: (materiaSlotId, electivaId) => {
+        set((s) => ({
+          estadoMaterias: {
+            ...s.estadoMaterias,
+            [materiaSlotId]: { ...s.estadoMaterias[materiaSlotId], electivaAsignadaId: electivaId },
           },
         }));
       },

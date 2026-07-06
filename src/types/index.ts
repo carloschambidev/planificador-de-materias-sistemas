@@ -33,6 +33,17 @@ export interface MateriaDefinicion {
 }
 
 /**
+ * Definición de una materia electiva específica para elegir.
+ */
+export interface ElectivaDefinicion {
+  id: string;
+  nombre: string;
+  area: string;
+  regularizadasRequeridas: string[];
+  aprobadasRequeridas: string[];
+}
+
+/**
  * Estado dinámico de una materia (guardado en store / LocalStorage).
  */
 export interface EstadoDinamico {
@@ -40,6 +51,7 @@ export interface EstadoDinamico {
   notasPersonales?: string;
   nombrePersonalizado?: string;
   duracionPersonalizada?: DuracionMateria;
+  electivaAsignadaId?: string;
 }
 
 /**

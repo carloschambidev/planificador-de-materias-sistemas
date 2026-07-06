@@ -6,6 +6,7 @@
 import { useMemo } from 'react';
 import { useCarreraStore } from '../store/useCarreraStore';
 import { MATERIAS, getMateriaById } from '../data/materias';
+import { getElectivaById } from '../data/electivas';
 import {
   cuentaComoAprobada,
   cuentaComoRegularizada,
@@ -35,8 +36,19 @@ export function useCorrelatividades(): {
 
       const motivoBloqueo: string[] = [];
 
+      let reqReg = def.regularizadasRequeridas;
+      let reqApr = def.aprobadasRequeridas;
+
+      if (def.esElectiva && dinamico.electivaAsignadaId) {
+        const electivaDef = getElectivaById(dinamico.electivaAsignadaId);
+        if (electivaDef) {
+          reqReg = electivaDef.regularizadasRequeridas;
+          reqApr = electivaDef.aprobadasRequeridas;
+        }
+      }
+
       // ── Verificar regularizadas requeridas ──────────────────
-      for (const reqId of def.regularizadasRequeridas) {
+      for (const reqId of reqReg) {
         const reqEstado = estadoMaterias[reqId]?.estado ?? 'no-iniciada';
         if (!cuentaComoRegularizada(reqEstado)) {
           const reqDef = getMateriaById(reqId);
@@ -47,7 +59,7 @@ export function useCorrelatividades(): {
       }
 
       // ── Verificar aprobadas requeridas ──────────────────────
-      for (const reqId of def.aprobadasRequeridas) {
+      for (const reqId of reqApr) {
         const reqEstado = estadoMaterias[reqId]?.estado ?? 'no-iniciada';
         if (!cuentaComoAprobada(reqEstado)) {
           const reqDef = getMateriaById(reqId);
@@ -65,7 +77,7 @@ export function useCorrelatividades(): {
         estaBloqueada,
         motivoBloqueo,
         // Aplicar personalizaciones del usuario
-        nombre: dinamico.nombrePersonalizado ?? def.nombre,
+        nombre: dinamico.nombrePersonalizado ?? (def.esElectiva && dinamico.electivaAsignadaId ? getElectivaById(dinamico.electivaAsignadaId)?.nombre : def.nombre) ?? def.nombre,
         duracion: dinamico.duracionPersonalizada ?? def.duracion,
       };
     });

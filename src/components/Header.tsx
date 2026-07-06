@@ -14,12 +14,13 @@ import {
   Trash2,
   Map,
   LayoutDashboard,
+  BookOpen,
 } from 'lucide-react';
 import { useCarreraStore } from '../store/useCarreraStore';
 
 interface Props {
-  vistaActual: 'plan' | 'mapa';
-  onCambiarVista: (vista: 'plan' | 'mapa') => void;
+  vistaActual: 'plan' | 'mapa' | 'electivas';
+  onCambiarVista: (vista: 'plan' | 'mapa' | 'electivas') => void;
 }
 
 export function Header({ vistaActual, onCambiarVista }: Props) {
@@ -108,6 +109,12 @@ export function Header({ vistaActual, onCambiarVista }: Props) {
               icon={<Map size={14} />}
               label="Mapa de Correlatividades"
             />
+            <TabButton
+              active={vistaActual === 'electivas'}
+              onClick={() => onCambiarVista('electivas')}
+              icon={<BookOpen size={14} />}
+              label="Electivas"
+            />
           </div>
 
           {/* Acciones */}
@@ -176,6 +183,12 @@ export function Header({ vistaActual, onCambiarVista }: Props) {
             onClick={() => onCambiarVista('mapa')}
             icon={<Map size={14} />}
             label="Mapa"
+          />
+          <TabButton
+            active={vistaActual === 'electivas'}
+            onClick={() => onCambiarVista('electivas')}
+            icon={<BookOpen size={14} />}
+            label="Electivas"
           />
         </div>
       </div>

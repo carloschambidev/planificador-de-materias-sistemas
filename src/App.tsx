@@ -11,6 +11,7 @@ import { MateriaModal } from './components/MateriaModal';
 import { EditarMateriaModal } from './components/EditarMateriaModal';
 import { MapaCorrelatividades } from './components/MapaCorrelatividades';
 import { Leyenda } from './components/Leyenda';
+import { VistaElectivas } from './components/VistaElectivas';
 import { useCorrelatividades, useEstadisticas } from './hooks/useCorrelatividades';
 import type { MateriaCompleta } from './types';
 
@@ -18,7 +19,7 @@ export default function App() {
   const { materias, getMateriaCompleta, getEstadosDisponibles } = useCorrelatividades();
   const stats = useEstadisticas(materias);
 
-  const [vista, setVista] = useState<'plan' | 'mapa'>('plan');
+  const [vista, setVista] = useState<'plan' | 'mapa' | 'electivas'>('plan');
   const [materiaSeleccionada, setMateriaSeleccionada] = useState<MateriaCompleta | null>(null);
   const [materiaEditar, setMateriaEditar] = useState<MateriaCompleta | null>(null);
 
@@ -98,7 +99,7 @@ export default function App() {
                 );
               })}
             </motion.div>
-          ) : (
+          ) : vista === 'mapa' ? (
             <motion.div
               key="mapa"
               initial={{ opacity: 0, x: 20 }}
@@ -118,6 +119,8 @@ export default function App() {
                 <MapaCorrelatividades materias={materias} />
               </div>
             </motion.div>
+          ) : (
+            <VistaElectivas key="electivas" />
           )}
         </AnimatePresence>
 
