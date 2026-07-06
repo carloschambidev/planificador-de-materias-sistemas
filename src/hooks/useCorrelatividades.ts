@@ -76,6 +76,8 @@ export function useCorrelatividades(): {
         estadoDinamico: dinamico,
         estaBloqueada,
         motivoBloqueo,
+        regularizadasRequeridas: reqReg,
+        aprobadasRequeridas: reqApr,
         // Aplicar personalizaciones del usuario
         nombre: dinamico.nombrePersonalizado ?? (def.esElectiva && dinamico.electivaAsignadaId ? getElectivaById(dinamico.electivaAsignadaId)?.nombre : def.nombre) ?? def.nombre,
         duracion: dinamico.duracionPersonalizada ?? def.duracion,

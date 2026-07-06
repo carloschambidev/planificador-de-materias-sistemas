@@ -39,6 +39,7 @@ export interface ElectivaDefinicion {
   id: string;
   nombre: string;
   area: string;
+  descripcion?: string;
   regularizadasRequeridas: string[];
   aprobadasRequeridas: string[];
 }
