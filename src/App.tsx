@@ -60,8 +60,8 @@ export default function App() {
 
       {/* Main content */}
       <main className="relative max-w-screen-2xl mx-auto px-4 sm:px-6 py-6 space-y-6">
-        {/* Estadísticas siempre visibles */}
-        <EstadisticasPanel stats={stats} />
+        {/* Estadísticas solo visibles en la vista de plan */}
+        {vista === 'plan' && <EstadisticasPanel stats={stats} />}
 
         {/* Vista */}
         <AnimatePresence mode="wait">
@@ -76,7 +76,7 @@ export default function App() {
             >
               {/* Leyenda */}
               <div className="flex items-center justify-between">
-                <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wider">
+                <h2 className="text-lg sm:text-xl font-bold text-indigo-300 uppercase tracking-wider">
                   Plan de Estudios
                 </h2>
               </div>
@@ -108,7 +108,7 @@ export default function App() {
               transition={{ duration: 0.3 }}
             >
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-0 mb-4">
-                <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wider">
+                <h2 className="text-lg sm:text-xl font-bold text-indigo-300 uppercase tracking-wider">
                   Mapa de Correlatividades
                 </h2>
                 <p className="text-xs text-gray-500">

@@ -62,10 +62,10 @@ export function VistaElectivas() {
     >
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-0">
         <div>
-          <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wider">
+          <h2 className="text-xl sm:text-2xl font-bold text-indigo-300 uppercase tracking-wider">
             Materias Electivas
           </h2>
-          <p className="text-xs text-gray-500 mt-1">
+          <p className="text-sm text-indigo-200 mt-1">
             Explora las materias optativas y asígnalas a los bloques de tu plan de estudios.
           </p>
         </div>
