@@ -14,7 +14,7 @@ La idea principal es ayudar al estudiante a tener un panorama claro del recorrid
 
 ## ¿Qué hace la página?
 
-La aplicación ofrece dos formas principales de ver la carrera:
+La aplicación ofrece tres formas principales de ver la carrera:
 
 1. Vista de plan de estudios
    - Muestra las materias organizadas por nivel.
@@ -24,6 +24,11 @@ La aplicación ofrece dos formas principales de ver la carrera:
 2. Vista de mapa de correlatividades
    - Presenta las relaciones entre materias en un grafo visual.
    - Permite entender mejor cómo se conectan las asignaturas entre sí.
+
+3. Vista de electivas
+   - Muestra las materias optativas disponibles del plan.
+   - Permite ver una descripción breve de cada electiva, sus requisitos de correlatividades y asignarla a los espacios del plan.
+   - Ayuda a decidir cuál electiva elegir según el estado académico del estudiante.
 
 ## Funcionalidades principales
 
@@ -35,6 +40,7 @@ La aplicación ofrece dos formas principales de ver la carrera:
 - Guardado persistente en el navegador mediante LocalStorage.
 - Importación y exportación de datos en formato JSON.
 - Vista visual del mapa de dependencias académicas.
+- Gestión de materias electivas con requisitos y asignación por nivel.
 
 ## Cómo funciona internamente
 
