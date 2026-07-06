@@ -17,9 +17,9 @@ export const MATERIAS: MateriaDefinicion[] = [
   {
     id: 'spn',
     nombre: 'Sistemas y Procesos de Negocio',
-    codigo: 'SPN',
+    codigo: 'SyPN',
     nivel: 1,
-    duracion: 'cuatrimestral',
+    duracion: 'anual',
     regularizadasRequeridas: [],
     aprobadasRequeridas: [],
   },
@@ -35,7 +35,7 @@ export const MATERIAS: MateriaDefinicion[] = [
   {
     id: 'led',
     nombre: 'Lógica y Estructuras Discretas',
-    codigo: 'LED',
+    codigo: 'LyED',
     nivel: 1,
     duracion: 'anual',
     regularizadasRequeridas: [],
@@ -44,7 +44,7 @@ export const MATERIAS: MateriaDefinicion[] = [
   {
     id: 'aed',
     nombre: 'Algoritmos y Estructuras de Datos',
-    codigo: 'AED',
+    codigo: 'AyED',
     nivel: 1,
     duracion: 'anual',
     regularizadasRequeridas: [],
@@ -53,9 +53,9 @@ export const MATERIAS: MateriaDefinicion[] = [
   {
     id: 'arqcomp',
     nombre: 'Arquitectura de Computadoras',
-    codigo: 'ArqComp',
+    codigo: 'AdC',
     nivel: 1,
-    duracion: 'cuatrimestral',
+    duracion: 'anual',
     regularizadasRequeridas: [],
     aprobadasRequeridas: [],
   },
@@ -80,7 +80,7 @@ export const MATERIAS: MateriaDefinicion[] = [
   {
     id: 'iys',
     nombre: 'Ingeniería y Sociedad',
-    codigo: 'IyS',
+    codigo: 'IngSoc',
     nivel: 1,
     duracion: 'cuatrimestral',
     regularizadasRequeridas: [],
@@ -96,7 +96,6 @@ export const MATERIAS: MateriaDefinicion[] = [
     codigo: 'ASI',
     nivel: 2,
     duracion: 'anual',
-    // Para cursar: SPN y AED deben estar regularizadas
     regularizadasRequeridas: ['spn', 'aed'],
     aprobadasRequeridas: [],
   },
@@ -106,36 +105,33 @@ export const MATERIAS: MateriaDefinicion[] = [
     codigo: 'AM2',
     nivel: 2,
     duracion: 'anual',
-    // Para cursar: AM1 y AGA deben estar regularizadas
     regularizadasRequeridas: ['am1', 'aga'],
     aprobadasRequeridas: [],
   },
   {
     id: 'ssl',
     nombre: 'Sintaxis y Semántica de los Lenguajes',
-    codigo: 'SSL',
+    codigo: 'SySL',
     nivel: 2,
-    duracion: 'cuatrimestral',
-    // Para cursar: LED y AED deben estar regularizadas
+    duracion: 'anual',
     regularizadasRequeridas: ['led', 'aed'],
     aprobadasRequeridas: [],
   },
   {
     id: 'pp',
     nombre: 'Paradigmas de Programación',
-    codigo: 'PP',
+    codigo: 'PdP',
     nivel: 2,
     duracion: 'anual',
-    // Para cursar: AED debe estar aprobada; LED regularizada
-    regularizadasRequeridas: ['led'],
-    aprobadasRequeridas: ['aed'],
+    regularizadasRequeridas: ['led', 'aed'],
+    aprobadasRequeridas: [],
   },
   {
     id: 'ing1',
     nombre: 'Inglés I',
-    codigo: 'ING1',
+    codigo: 'IT1',
     nivel: 2,
-    duracion: 'cuatrimestral',
+    duracion: 'anual',
     regularizadasRequeridas: [],
     aprobadasRequeridas: [],
   },
@@ -145,19 +141,17 @@ export const MATERIAS: MateriaDefinicion[] = [
     codigo: 'F2',
     nivel: 2,
     duracion: 'anual',
-    // Para cursar: AM1 y F1 deben estar regularizadas
     regularizadasRequeridas: ['am1', 'f1'],
     aprobadasRequeridas: [],
   },
   {
     id: 'so',
     nombre: 'Sistemas Operativos',
-    codigo: 'SO',
+    codigo: 'SSOO',
     nivel: 2,
     duracion: 'cuatrimestral',
-    // Para cursar: ArqComp debe estar aprobada; AED regularizada
-    regularizadasRequeridas: ['aed'],
-    aprobadasRequeridas: ['arqcomp'],
+    regularizadasRequeridas: ['arqcomp'],
+    aprobadasRequeridas: [],
   },
   {
     id: 'pye',
@@ -165,7 +159,6 @@ export const MATERIAS: MateriaDefinicion[] = [
     codigo: 'PyE',
     nivel: 2,
     duracion: 'cuatrimestral',
-    // Para cursar: AM1 y AGA deben estar regularizadas
     regularizadasRequeridas: ['am1', 'aga'],
     aprobadasRequeridas: [],
   },
@@ -179,19 +172,17 @@ export const MATERIAS: MateriaDefinicion[] = [
     codigo: 'DSI',
     nivel: 3,
     duracion: 'anual',
-    // Para cursar: ASI debe estar aprobada
-    regularizadasRequeridas: [],
-    aprobadasRequeridas: ['asi'],
+    regularizadasRequeridas: ['asi', 'pp'],
+    aprobadasRequeridas: ['ing1', 'aed', 'spn'],
   },
   {
     id: 'ing2',
     nombre: 'Inglés II',
-    codigo: 'ING2',
+    codigo: 'IT2',
     nivel: 3,
-    duracion: 'cuatrimestral',
-    // Para cursar: ING1 debe estar aprobada
-    regularizadasRequeridas: [],
-    aprobadasRequeridas: ['ing1'],
+    duracion: 'anual',
+    regularizadasRequeridas: ['ing1'],
+    aprobadasRequeridas: [],
   },
   {
     id: 'eco',
@@ -200,27 +191,25 @@ export const MATERIAS: MateriaDefinicion[] = [
     nivel: 3,
     duracion: 'cuatrimestral',
     regularizadasRequeridas: [],
-    aprobadasRequeridas: [],
+    aprobadasRequeridas: ['am1', 'aga'],
   },
   {
     id: 'ds',
     nombre: 'Desarrollo de Software',
-    codigo: 'DS',
+    codigo: 'DdS',
     nivel: 3,
-    duracion: 'anual',
-    // Para cursar: PP y SSL deben estar aprobadas; SO regularizada
-    regularizadasRequeridas: ['so'],
-    aprobadasRequeridas: ['pp', 'ssl'],
+    duracion: 'cuatrimestral',
+    regularizadasRequeridas: ['pp', 'asi'],
+    aprobadasRequeridas: ['led', 'aed'],
   },
   {
     id: 'bd',
-    nombre: 'Bases de Datos',
+    nombre: 'Base de Datos',
     codigo: 'BD',
     nivel: 3,
-    duracion: 'anual',
-    // Para cursar: SSL debe estar aprobada; ASI regularizada
-    regularizadasRequeridas: ['asi'],
-    aprobadasRequeridas: ['ssl'],
+    duracion: 'cuatrimestral',
+    regularizadasRequeridas: ['ssl', 'asi'],
+    aprobadasRequeridas: ['led', 'aed'],
   },
   {
     id: 'si',
@@ -228,28 +217,25 @@ export const MATERIAS: MateriaDefinicion[] = [
     codigo: 'SI',
     nivel: 3,
     duracion: 'cuatrimestral',
-    // Para cursar: ASI y PP regularizadas
-    regularizadasRequeridas: ['asi', 'pp'],
-    aprobadasRequeridas: [],
+    regularizadasRequeridas: ['asi'],
+    aprobadasRequeridas: ['spn', 'aed', 'ssl', 'pp'],
   },
   {
     id: 'cdd',
     nombre: 'Comunicación de Datos',
-    codigo: 'CdD',
+    codigo: 'CD',
     nivel: 3,
     duracion: 'cuatrimestral',
-    // Para cursar: ArqComp aprobada; SO regularizada
-    regularizadasRequeridas: ['so'],
-    aprobadasRequeridas: ['arqcomp'],
+    regularizadasRequeridas: [],
+    aprobadasRequeridas: ['arqcomp', 'f1'],
   },
   {
     id: 'rdd',
     nombre: 'Redes de Datos',
-    codigo: 'RdD',
+    codigo: 'RD',
     nivel: 3,
     duracion: 'cuatrimestral',
-    // Para cursar: CdD regularizada
-    regularizadasRequeridas: ['cdd'],
+    regularizadasRequeridas: ['so', 'cdd'],
     aprobadasRequeridas: [],
   },
   {
@@ -269,12 +255,11 @@ export const MATERIAS: MateriaDefinicion[] = [
   {
     id: 'adm',
     nombre: 'Administración de Sistemas de Información',
-    codigo: 'ADM',
+    codigo: 'AdmSI',
     nivel: 4,
     duracion: 'anual',
-    // Para cursar: DSI debe estar aprobada
-    regularizadasRequeridas: [],
-    aprobadasRequeridas: ['dsi'],
+    regularizadasRequeridas: ['eco', 'dsi'],
+    aprobadasRequeridas: ['asi'],
   },
   {
     id: 'an',
@@ -282,37 +267,34 @@ export const MATERIAS: MateriaDefinicion[] = [
     codigo: 'AN',
     nivel: 4,
     duracion: 'cuatrimestral',
-    // Para cursar: AM2 y PyE aprobadas
-    regularizadasRequeridas: [],
-    aprobadasRequeridas: ['am2', 'pye'],
+    regularizadasRequeridas: ['am2'],
+    aprobadasRequeridas: ['am1', 'aga'],
   },
   {
     id: 'ics',
     nombre: 'Ingeniería y Calidad de Software',
-    codigo: 'ICS',
+    codigo: 'IyCS',
     nivel: 4,
-    duracion: 'anual',
-    // Para cursar: DS debe estar aprobada
-    regularizadasRequeridas: [],
-    aprobadasRequeridas: ['ds'],
+    duracion: 'cuatrimestral',
+    regularizadasRequeridas: ['bd', 'ds', 'dsi'],
+    aprobadasRequeridas: ['ssl', 'pp'],
   },
   {
     id: 'sim',
     nombre: 'Simulación',
-    codigo: 'SIM',
+    codigo: 'Sim',
     nivel: 4,
     duracion: 'cuatrimestral',
-    // Para cursar: PyE aprobada
-    regularizadasRequeridas: [],
-    aprobadasRequeridas: ['pye'],
+    regularizadasRequeridas: ['pye'],
+    aprobadasRequeridas: ['am2'],
   },
   {
     id: 'leg',
     nombre: 'Legislación',
-    codigo: 'LEG',
+    codigo: 'Leg',
     nivel: 4,
     duracion: 'cuatrimestral',
-    regularizadasRequeridas: [],
+    regularizadasRequeridas: ['iys'],
     aprobadasRequeridas: [],
   },
   {
@@ -320,30 +302,27 @@ export const MATERIAS: MateriaDefinicion[] = [
     nombre: 'Investigación Operativa',
     codigo: 'IO',
     nivel: 4,
-    duracion: 'anual',
-    // Para cursar: AM2 y PyE aprobadas
-    regularizadasRequeridas: [],
-    aprobadasRequeridas: ['am2', 'pye'],
+    duracion: 'cuatrimestral',
+    regularizadasRequeridas: ['pye', 'an'],
+    aprobadasRequeridas: [],
   },
   {
     id: 'tpa',
     nombre: 'Tecnologías para la Automatización',
-    codigo: 'TPA',
+    codigo: 'TpA',
     nivel: 4,
     duracion: 'cuatrimestral',
-    // Para cursar: SO y CdD aprobadas
-    regularizadasRequeridas: [],
-    aprobadasRequeridas: ['so', 'cdd'],
+    regularizadasRequeridas: ['f2', 'an'],
+    aprobadasRequeridas: ['am2'],
   },
   {
     id: 'cd',
     nombre: 'Ciencia de Datos',
-    codigo: 'CD',
+    codigo: 'CdD',
     nivel: 4,
     duracion: 'cuatrimestral',
-    // Para cursar: BD y PyE aprobadas
-    regularizadasRequeridas: [],
-    aprobadasRequeridas: ['bd', 'pye'],
+    regularizadasRequeridas: ['sim'],
+    aprobadasRequeridas: ['pye', 'bd'],
   },
   {
     id: 'electiva4',
@@ -365,9 +344,8 @@ export const MATERIAS: MateriaDefinicion[] = [
     codigo: 'PF',
     nivel: 5,
     duracion: 'anual',
-    // Para cursar: ASI, DS, ICS, BD aprobadas
-    regularizadasRequeridas: [],
-    aprobadasRequeridas: ['asi', 'ds', 'ics', 'bd'],
+    regularizadasRequeridas: ['ics', 'adm', 'rdd'],
+    aprobadasRequeridas: ['ing2', 'ds', 'dsi'],
   },
   {
     id: 'ia',
@@ -375,29 +353,26 @@ export const MATERIAS: MateriaDefinicion[] = [
     codigo: 'IA',
     nivel: 5,
     duracion: 'cuatrimestral',
-    // Para cursar: CdD y CD aprobadas
-    regularizadasRequeridas: [],
-    aprobadasRequeridas: ['cdd', 'cd'],
+    regularizadasRequeridas: ['sim'],
+    aprobadasRequeridas: ['pye', 'an'],
   },
   {
     id: 'gg',
     nombre: 'Gestión Gerencial',
-    codigo: 'GG',
+    codigo: 'GC',
     nivel: 5,
     duracion: 'cuatrimestral',
-    // Para cursar: ADM e IO aprobadas
-    regularizadasRequeridas: [],
-    aprobadasRequeridas: ['adm', 'io'],
+    regularizadasRequeridas: ['leg', 'adm'],
+    aprobadasRequeridas: ['eco'],
   },
   {
     id: 'sdg',
     nombre: 'Sistemas de Gestión',
-    codigo: 'SdG',
+    codigo: 'SG',
     nivel: 5,
     duracion: 'cuatrimestral',
-    // Para cursar: ADM aprobada
-    regularizadasRequeridas: [],
-    aprobadasRequeridas: ['adm'],
+    regularizadasRequeridas: ['eco', 'io'],
+    aprobadasRequeridas: ['dsi'],
   },
   {
     id: 'ssi',
@@ -405,9 +380,8 @@ export const MATERIAS: MateriaDefinicion[] = [
     codigo: 'SSI',
     nivel: 5,
     duracion: 'cuatrimestral',
-    // Para cursar: RdD y DS aprobadas
-    regularizadasRequeridas: [],
-    aprobadasRequeridas: ['rdd', 'ds'],
+    regularizadasRequeridas: ['rdd', 'adm'],
+    aprobadasRequeridas: ['ds', 'cdd'],
   },
   {
     id: 'electiva5',
@@ -425,11 +399,9 @@ export const MATERIAS: MateriaDefinicion[] = [
     codigo: 'PPS',
     nivel: 5,
     duracion: 'anual',
-    // Para cursar requiere haber aprobado el 60% de las materias de la carrera
-    // Se simplifica como: necesita aprobadas del 1er al 4to nivel
-    regularizadasRequeridas: [],
-    aprobadasRequeridas: ['asi', 'dsi', 'ds', 'bd', 'adm', 'ics'],
-  },
+    regularizadasRequeridas: ['ics', 'adm', 'rdd'],
+    aprobadasRequeridas: ['ing2', 'ds', 'dsi'],
+  }
 ];
 
 /**
