@@ -6,7 +6,6 @@
 import { useState, useRef } from 'react';
 import { motion } from 'framer-motion';
 import {
-  GraduationCap,
   Download,
   Upload,
   Cloud,
@@ -16,6 +15,7 @@ import {
   LayoutDashboard,
   BookOpen,
 } from 'lucide-react';
+import logoUTN from '../../public/logo_utn.png';
 import { useCarreraStore } from '../store/useCarreraStore';
 
 interface Props {
@@ -83,9 +83,9 @@ export function Header({ vistaActual, onCambiarVista }: Props) {
             <motion.div
               animate={{ rotate: [0, -5, 5, -5, 0] }}
               transition={{ duration: 2, repeat: Infinity, repeatDelay: 5 }}
-              className="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center shadow-lg shadow-indigo-500/20"
+              className="w-12 h-12 rounded-xl overflow-hidden flex items-center justify-center shadow-lg shadow-indigo-500/20 bg-white"
             >
-              <GraduationCap size={20} className="text-white" />
+              <img src={logoUTN} alt="UTN" className="w-10 h-10 object-contain filter brightness-0" />
             </motion.div>
             <div>
               <h1 className="text-sm font-bold text-white leading-none">UTN FRBA</h1>
