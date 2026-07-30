@@ -30,6 +30,12 @@ export interface MateriaDefinicion {
   /** IDs de materias que deben estar APROBADAS o PROMOCIONADAS para poder cursar esta */
   aprobadasRequeridas: string[];
   esElectiva?: boolean;
+  /** Carga horaria de la materia (ej: '5Hs', '200Hs Reloj') */
+  horas: string;
+  /** Título personalizado para la sección de requisitos (ej: 'Requisitos para Iniciar y Acreditar:') */
+  tituloRequisitos?: string;
+  /** Requisitos adicionales especiales no basados en correlativas estándar */
+  requisitoAdicional?: string;
 }
 
 /**
@@ -68,6 +74,8 @@ export interface MateriaCompleta extends MateriaDefinicion {
 
 /**
  * Colores y etiquetas para cada estado.
+ * 💡 AQUÍ PUEDES MODIFICAR LOS COLORES DE LA VISTA DE PLAN DE ESTUDIOS (MODO OSCURO)
+ * Modifica los campos 'bgColor', 'borderColor', 'textColor' y 'color' (para los badges) según prefieras.
  */
 export const ESTADO_CONFIG: Record<EstadoMateria, {
   label: string;

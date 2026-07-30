@@ -14,6 +14,7 @@ import { Leyenda } from './components/Leyenda';
 import { VistaElectivas } from './components/VistaElectivas';
 import { useCorrelatividades, useEstadisticas } from './hooks/useCorrelatividades';
 import type { MateriaCompleta } from './types';
+import { FileText } from 'lucide-react';
 
 export default function App() {
   const { materias, getMateriaCompleta, getEstadosDisponibles } = useCorrelatividades();
@@ -107,13 +108,24 @@ export default function App() {
               exit={{ opacity: 0, x: -20 }}
               transition={{ duration: 0.3 }}
             >
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-0 mb-4">
-                <h2 className="text-lg sm:text-xl font-bold text-indigo-300 uppercase tracking-wider">
-                  Mapa de Correlatividades
-                </h2>
-                <p className="text-xs text-gray-500">
-                  Hacé scroll/zoom para navegar el grafo
-                </p>
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
+                <div>
+                  <h2 className="text-lg sm:text-xl font-bold text-indigo-300 uppercase tracking-wider">
+                    Mapa de Correlatividades
+                  </h2>
+                  <p className="text-xs text-gray-500 mt-1">
+                    Hacé scroll/zoom para navegar el grafo
+                  </p>
+                </div>
+                <a
+                  href={`${import.meta.env.BASE_URL}plan_estudio_sistemas_franja_morada.pdf`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider bg-purple-900/40 hover:bg-purple-800 text-purple-200 hover:text-white border border-purple-500/50 hover:border-purple-500 shadow-md shadow-purple-950/40 transition-all hover:scale-[1.02] active:scale-[0.98]"
+                >
+                  <FileText size={14} />
+                  Plan de Estudio PDF (Franja Morada)
+                </a>
               </div>
               <div className="relative">
                 <MapaCorrelatividades materias={materias} />

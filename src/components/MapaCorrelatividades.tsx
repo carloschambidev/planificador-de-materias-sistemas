@@ -15,7 +15,8 @@ interface Props {
   materias: MateriaCompleta[];
 }
 
-// Colores de encabezado por nivel — palette suave modo claro
+// 💡 AQUÍ PUEDES MODIFICAR LOS COLORES DE LAS CABECERAS DE LOS NIVELES EN EL MAPA (1 al 5)
+// bg: color de fondo, text: color del título, border: color de borde, accent: color del progreso y porcentaje
 const NIVEL_HEADER: Record<number, { bg: string; text: string; border: string; accent: string }> = {
   1: { bg: '#EDE9FE', text: '#5B21B6', border: '#C4B5FD', accent: '#7C3AED' },
   2: { bg: '#DBEAFE', text: '#1D4ED8', border: '#93C5FD', accent: '#2563EB' },
@@ -24,7 +25,8 @@ const NIVEL_HEADER: Record<number, { bg: string; text: string; border: string; a
   5: { bg: '#FEF3C7', text: '#92400E', border: '#FCD34D', accent: '#D97706' },
 };
 
-// Estilos de card según estado — versión clara
+// 💡 AQUÍ PUEDES MODIFICAR LOS COLORES DE LAS TARJETAS SEGÚN SU ESTADO EN EL MAPA
+// bg: fondo, border: borde, text: color de letra principal, badge: color del fondo de estado, badgeText: letra de estado
 const CARD_ESTADO: Record<string, { bg: string; border: string; text: string; badge: string; badgeText: string }> = {
   'no-iniciada':    { bg: '#FFFFFF', border: '#E5E7EB', text: '#374151', badge: '#F3F4F6', badgeText: '#6B7280' },
   cursando:         { bg: '#EFF6FF', border: '#3B82F6', text: '#1E40AF', badge: '#3B82F6', badgeText: '#fff' },
@@ -40,48 +42,82 @@ function MiniCard({ materia, onClick }: { materia: MateriaCompleta; onClick: () 
   const s = CARD_ESTADO[key] ?? CARD_ESTADO['no-iniciada'];
   const cfgEstado = materia.estaBloqueada ? BLOQUEADA_CONFIG : ESTADO_CONFIG[materia.estadoDinamico.estado];
 
+  const regularizadas = materia.regularizadasRequeridas
+    .map(id => getMateriaById(id)?.codigo ?? id)
+    .join(', ');
+
+  const aprobadas = materia.aprobadasRequeridas
+    .map(id => getMateriaById(id)?.codigo ?? id)
+    .join(', ');
+
+  const duracionTexto = (materia.estadoDinamico.duracionPersonalizada ?? materia.duracion) === 'anual'
+    ? 'Anual'
+    : materia.id === 'iys'
+    ? 'Segundo Cuatrimestre'
+    : 'Cuatrimestral';
+
   return (
     <motion.button
       whileHover={{ scale: 1.02, y: -2 }}
       whileTap={{ scale: 0.98 }}
       onClick={onClick}
-      className="w-full text-left rounded-xl border-2 p-2.5 transition-shadow group"
+      className="w-full text-left rounded-xl border-2 p-2 transition-shadow group flex flex-col justify-between"
       style={{
         backgroundColor: s.bg,
         borderColor: s.border,
         boxShadow: materia.estaBloqueada ? 'none' : `0 2px 8px ${s.border}40`,
       }}
     >
-      {/* Código + ícono */}
-      <div className="flex items-center justify-between mb-1">
-        <span
-          className="text-[10px] font-mono font-bold leading-none px-1.5 py-0.5 rounded-md"
-          style={{ backgroundColor: s.badge, color: s.badgeText }}
-        >
-          {materia.codigo}
-        </span>
-        <span className="text-sm opacity-70">
-          {materia.estaBloqueada ? '🔒' : cfgEstado.icon}
-        </span>
+      <div>
+        {/* Cabecera compacta con Estado Badge + Lock Icon */}
+        <div className="flex items-center justify-between gap-1 mb-1 text-[9px] w-full">
+          <span
+            className="font-bold px-1.5 py-0.5 rounded-md"
+            style={{ backgroundColor: s.badge + '30', color: materia.estaBloqueada ? s.badgeText : s.border }}
+          >
+            {materia.estaBloqueada ? 'Bloqueada' : cfgEstado.label}
+          </span>
+          <span className="opacity-70 text-[10px] leading-none">
+            {materia.estaBloqueada ? '🔒' : cfgEstado.icon}
+          </span>
+        </div>
+
+        {/* Nombre de la Materia (Centrado y Destacado) */}
+        <h4 className="text-[11px] font-bold text-center leading-tight mb-0.5" style={{ color: s.text }}>
+          {materia.nombre}
+        </h4>
+
+        {/* Subtítulo: Código - Duración Horas (Centrado y en gris) */}
+        <p className="text-[9px] text-center text-gray-500 font-medium leading-none mb-1">
+          {materia.codigo} - {materia.id === 'pps' ? '200Hs Reloj' : `${duracionTexto} ${materia.horas}`}
+        </p>
       </div>
 
-      {/* Nombre */}
-      <p
-        className="text-[11px] font-semibold leading-tight"
-        style={{ color: s.text }}
-      >
-        {materia.nombre}
-      </p>
-
-      {/* Estado badge */}
-      <div className="mt-1.5 flex items-center justify-between">
-        <span
-          className="text-[9px] font-semibold px-1.5 py-0.5 rounded-full"
-          style={{ backgroundColor: s.badge + '30', color: materia.estaBloqueada ? s.badgeText : s.border }}
-        >
-          {materia.estaBloqueada ? 'Bloqueada' : cfgEstado.label}
-        </span>
-        <ChevronRight size={10} className="opacity-30 group-hover:opacity-60 transition-opacity" />
+      {/* Requisitos (Estilo Afiche Franja Morada, al pie con divisor) */}
+      <div className="text-[9px] border-t pt-1 mt-1 border-gray-200/60 text-gray-600 space-y-0 w-full">
+        <p className="font-bold tracking-wide text-[8.5px]" style={{ color: s.text + 'BB' }}>
+          {materia.tituloRequisitos ?? 'Requisitos:'}
+        </p>
+        
+        {materia.requisitoAdicional && (
+          <p className="leading-tight font-medium text-purple-700 italic">{materia.requisitoAdicional}</p>
+        )}
+        
+        {!materia.requisitoAdicional && !regularizadas && !aprobadas && (
+          <p className="text-gray-400 font-medium">-</p>
+        )}
+        
+        {regularizadas && (
+          <p className="leading-tight text-gray-600">
+            <span className="font-semibold text-gray-400">Reg:</span> {regularizadas}
+          </p>
+        )}
+        
+        {aprobadas && (
+          <p className="leading-tight text-gray-600">
+            <span className="font-semibold text-gray-400">Apr:</span> {aprobadas}
+          </p>
+        )}
       </div>
     </motion.button>
   );
