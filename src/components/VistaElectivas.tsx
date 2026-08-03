@@ -100,7 +100,7 @@ export function VistaElectivas() {
                         <div className="flex-1">
                           <div className="flex flex-wrap items-center gap-2 mb-2">
                             <span className="text-[10px] font-semibold uppercase tracking-[0.24em] text-indigo-300">
-                              Electiva
+                              Electiva{electiva.codigo ? ` · (${electiva.codigo})` : ''}
                             </span>
                             {slotAsignado && (
                               <span className="text-[10px] font-semibold px-2 py-1 rounded-full bg-indigo-900/60 text-indigo-200">

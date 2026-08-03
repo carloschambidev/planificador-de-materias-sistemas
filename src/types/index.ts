@@ -44,6 +44,7 @@ export interface MateriaDefinicion {
 export interface ElectivaDefinicion {
   id: string;
   nombre: string;
+  codigo?: string;
   area: string;
   descripcion?: string;
   regularizadasRequeridas: string[];

@@ -36,19 +36,26 @@ const CARD_ESTADO: Record<string, { bg: string; border: string; text: string; ba
   bloqueada:        { bg: '#E5E7EB', border: '#9CA3AF', text: '#4B5563', badge: '#D1D5DB', badgeText: '#374151' },
 };
 
+function formatCorrelativasLista(ids: string[], maxVisible = 3): string {
+  if (!ids || ids.length === 0) return '';
+  const codigos = ids.map(id => getMateriaById(id)?.codigo ?? id);
+  if (codigos.length <= maxVisible) {
+    return codigos.join(', ');
+  }
+  const visibles = codigos.slice(0, maxVisible).join(', ');
+  const restantes = codigos.length - maxVisible;
+  const textoMaterias = restantes === 1 ? 'materia' : 'materias';
+  return `${visibles}... (+${restantes} ${textoMaterias})`;
+}
+
 // ── Mini card para la grilla ────────────────────────────────
 function MiniCard({ materia, onClick }: { materia: MateriaCompleta; onClick: () => void }) {
   const key = materia.estaBloqueada ? 'bloqueada' : materia.estadoDinamico.estado;
   const s = CARD_ESTADO[key] ?? CARD_ESTADO['no-iniciada'];
   const cfgEstado = materia.estaBloqueada ? BLOQUEADA_CONFIG : ESTADO_CONFIG[materia.estadoDinamico.estado];
 
-  const regularizadas = materia.regularizadasRequeridas
-    .map(id => getMateriaById(id)?.codigo ?? id)
-    .join(', ');
-
-  const aprobadas = materia.aprobadasRequeridas
-    .map(id => getMateriaById(id)?.codigo ?? id)
-    .join(', ');
+  const regularizadas = formatCorrelativasLista(materia.regularizadasRequeridas, 3);
+  const aprobadas = formatCorrelativasLista(materia.aprobadasRequeridas, 3);
 
   const duracionTexto = (materia.estadoDinamico.duracionPersonalizada ?? materia.duracion) === 'anual'
     ? 'Anual'
@@ -108,13 +115,19 @@ function MiniCard({ materia, onClick }: { materia: MateriaCompleta; onClick: () 
         )}
         
         {regularizadas && (
-          <p className="leading-tight text-gray-600">
+          <p
+            className="leading-tight text-gray-600 truncate"
+            title={materia.regularizadasRequeridas.map(id => getMateriaById(id)?.codigo ?? id).join(', ')}
+          >
             <span className="font-semibold text-gray-400">Reg:</span> {regularizadas}
           </p>
         )}
         
         {aprobadas && (
-          <p className="leading-tight text-gray-600">
+          <p
+            className="leading-tight text-gray-600 truncate"
+            title={materia.aprobadasRequeridas.map(id => getMateriaById(id)?.codigo ?? id).join(', ')}
+          >
             <span className="font-semibold text-gray-400">Apr:</span> {aprobadas}
           </p>
         )}
@@ -129,10 +142,15 @@ function DetalleModal({ materia, onClose }: { materia: MateriaCompleta; onClose:
   const s = CARD_ESTADO[key] ?? CARD_ESTADO['no-iniciada'];
   const cfgEstado = materia.estaBloqueada ? BLOQUEADA_CONFIG : ESTADO_CONFIG[materia.estadoDinamico.estado];
 
+  const muchosRequisitos =
+    materia.motivoBloqueo.length > 5 ||
+    materia.regularizadasRequeridas.length > 5 ||
+    materia.aprobadasRequeridas.length > 5;
+
   return (
     <AnimatePresence>
       <motion.div
-        className="fixed inset-0 z-50 flex items-center justify-center p-4"
+        className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
@@ -146,7 +164,7 @@ function DetalleModal({ materia, onClose }: { materia: MateriaCompleta; onClose:
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.92, y: 16 }}
           transition={{ type: 'spring', damping: 28, stiffness: 350 }}
-          className="relative w-full max-w-sm rounded-2xl border-2 shadow-2xl overflow-hidden z-10"
+          className={`relative w-full ${muchosRequisitos ? 'max-w-3xl md:max-w-4xl' : 'max-w-sm'} rounded-2xl border-2 shadow-2xl overflow-y-auto max-h-[90vh] z-10`}
           style={{
             backgroundColor: s.bg,
             borderColor: s.border,
@@ -203,59 +221,65 @@ function DetalleModal({ materia, onClose }: { materia: MateriaCompleta; onClose:
           </div>
 
           {/* Body */}
-          <div className="px-5 pb-5 space-y-3">
-            {/* Bloqueo */}
-            {materia.estaBloqueada && materia.motivoBloqueo.length > 0 && (
-              <div className="p-3 rounded-xl bg-red-50 border border-red-200">
-                <div className="flex items-center gap-2 mb-1.5">
-                  <Lock size={13} className="text-red-500" />
-                  <span className="text-xs font-semibold text-red-600">Requisitos pendientes</span>
+          <div className="px-5 pb-5">
+            <div className={`${muchosRequisitos ? 'grid grid-cols-1 md:grid-cols-2 gap-4' : 'space-y-3'}`}>
+              {/* Bloqueo */}
+              {materia.estaBloqueada && materia.motivoBloqueo.length > 0 && (
+                <div className="p-3.5 rounded-xl bg-red-50 border border-red-200">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Lock size={13} className="text-red-500" />
+                    <span className="text-xs font-semibold text-red-600">Requisitos pendientes ({materia.motivoBloqueo.length})</span>
+                  </div>
+                  <ul className={`grid gap-x-3 gap-y-1 ${muchosRequisitos ? 'grid-cols-1 sm:grid-cols-2 text-[11px]' : 'grid-cols-1 text-xs'}`}>
+                    {materia.motivoBloqueo.map((m, i) => (
+                      <li key={i} className="text-red-600 flex items-start gap-1 leading-tight">
+                        <span className="mt-0.5 shrink-0">·</span><span>{m}</span>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
-                <ul className="space-y-1">
-                  {materia.motivoBloqueo.map((m, i) => (
-                    <li key={i} className="text-xs text-red-500 flex items-start gap-1">
-                      <span className="mt-0.5">·</span><span>{m}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
+              )}
 
-            {/* Correlatividades */}
-            {(materia.regularizadasRequeridas.length > 0 || materia.aprobadasRequeridas.length > 0) && (
-              <div className="space-y-2">
-                {materia.regularizadasRequeridas.length > 0 && (
-                  <div>
-                    <p className="text-[10px] font-semibold uppercase tracking-wide text-gray-400 mb-1">Regularizadas requeridas</p>
-                    <div className="flex flex-wrap gap-1">
-                      {materia.regularizadasRequeridas.map(id => {
-                        const def = getMateriaById(id);
-                        return (
-                          <span key={id} className="text-[10px] px-2 py-0.5 rounded-full bg-amber-100 border border-amber-300 text-amber-700">
-                            {def?.nombre ?? id}
-                          </span>
-                        );
-                      })}
+              {/* Correlatividades */}
+              {(materia.regularizadasRequeridas.length > 0 || materia.aprobadasRequeridas.length > 0) && (
+                <div className="space-y-3">
+                  {materia.regularizadasRequeridas.length > 0 && (
+                    <div>
+                      <p className="text-[10px] font-semibold uppercase tracking-wide text-gray-400 mb-1">
+                        Regularizadas requeridas ({materia.regularizadasRequeridas.length})
+                      </p>
+                      <div className="flex flex-wrap gap-1">
+                        {materia.regularizadasRequeridas.map(id => {
+                          const def = getMateriaById(id);
+                          return (
+                            <span key={id} className="text-[10px] px-2 py-0.5 rounded-full bg-amber-100 border border-amber-300 text-amber-700">
+                              {def?.nombre ?? id}
+                            </span>
+                          );
+                        })}
+                      </div>
                     </div>
-                  </div>
-                )}
-                {materia.aprobadasRequeridas.length > 0 && (
-                  <div>
-                    <p className="text-[10px] font-semibold uppercase tracking-wide text-gray-400 mb-1">Aprobadas requeridas</p>
-                    <div className="flex flex-wrap gap-1">
-                      {materia.aprobadasRequeridas.map(id => {
-                        const def = getMateriaById(id);
-                        return (
-                          <span key={id} className="text-[10px] px-2 py-0.5 rounded-full bg-green-100 border border-green-300 text-green-700">
-                            {def?.nombre ?? id}
-                          </span>
-                        );
-                      })}
+                  )}
+                  {materia.aprobadasRequeridas.length > 0 && (
+                    <div>
+                      <p className="text-[10px] font-semibold uppercase tracking-wide text-gray-400 mb-1">
+                        Aprobadas requeridas ({materia.aprobadasRequeridas.length})
+                      </p>
+                      <div className="flex flex-wrap gap-1">
+                        {materia.aprobadasRequeridas.map(id => {
+                          const def = getMateriaById(id);
+                          return (
+                            <span key={id} className="text-[10px] px-2 py-0.5 rounded-full bg-green-100 border border-green-300 text-green-700">
+                              {def?.nombre ?? id}
+                            </span>
+                          );
+                        })}
+                      </div>
                     </div>
-                  </div>
-                )}
-              </div>
-            )}
+                  )}
+                </div>
+              )}
+            </div>
 
             {/* Notas */}
             {materia.estadoDinamico.notasPersonales && (

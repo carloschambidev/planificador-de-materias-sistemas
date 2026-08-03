@@ -26,6 +26,11 @@ export function MateriaModal({ materia, estadosDisponibles, onClose, onEditar }:
   const estadoActual = estadoDinamico.estado;
   const cfgActual = estaBloqueada ? BLOQUEADA_CONFIG : ESTADO_CONFIG[estadoActual];
 
+  const muchosRequisitos =
+    motivoBloqueo.length > 5 ||
+    materia.regularizadasRequeridas.length > 5 ||
+    materia.aprobadasRequeridas.length > 5;
+
   const handleEstado = (nuevoEstado: EstadoMateria) => {
     setEstado(materia.id, nuevoEstado);
     onClose();
@@ -35,7 +40,7 @@ export function MateriaModal({ materia, estadosDisponibles, onClose, onEditar }:
     <AnimatePresence>
       <motion.div
         key="backdrop"
-        className="fixed inset-0 z-50 flex items-center justify-center p-4"
+        className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
@@ -53,7 +58,7 @@ export function MateriaModal({ materia, estadosDisponibles, onClose, onEditar }:
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.9, y: 20 }}
           transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-          className="relative w-full max-w-lg bg-gray-900 border border-gray-700 rounded-2xl shadow-2xl overflow-hidden z-10"
+          className={`relative w-full ${muchosRequisitos ? 'max-w-3xl md:max-w-4xl' : 'max-w-lg'} bg-gray-900 border border-gray-700 rounded-2xl shadow-2xl overflow-y-auto max-h-[90vh] z-10`}
           style={{
             boxShadow: `0 25px 60px rgba(0,0,0,0.5), 0 0 40px ${cfgActual.glowColor}`,
           }}
@@ -114,14 +119,16 @@ export function MateriaModal({ materia, estadosDisponibles, onClose, onEditar }:
           <div className="px-6 pb-6 space-y-5">
             {/* Bloqueo */}
             {estaBloqueada && (
-              <div className="flex items-start gap-3 p-3 rounded-lg bg-red-900/20 border border-red-800/50">
+              <div className="flex items-start gap-3 p-3.5 rounded-xl bg-red-900/20 border border-red-800/50">
                 <Lock size={16} className="text-red-400 mt-0.5 shrink-0" />
-                <div>
-                  <p className="text-sm font-semibold text-red-300 mb-1">Materia bloqueada</p>
-                  <ul className="space-y-1">
+                <div className="w-full">
+                  <p className="text-sm font-semibold text-red-300 mb-2">
+                    Materia bloqueada — Requisitos pendientes ({motivoBloqueo.length})
+                  </p>
+                  <ul className={`grid gap-x-4 gap-y-1 ${muchosRequisitos ? 'grid-cols-1 sm:grid-cols-2 md:grid-cols-3 text-[11px]' : 'grid-cols-1 text-xs'}`}>
                     {motivoBloqueo.map((motivo, i) => (
-                      <li key={i} className="text-xs text-red-400 flex items-start gap-1">
-                        <span className="mt-0.5">•</span>
+                      <li key={i} className="text-red-400 flex items-start gap-1 leading-tight">
+                        <span className="mt-0.5 shrink-0">•</span>
                         <span>{motivo}</span>
                       </li>
                     ))}
@@ -200,15 +207,17 @@ function CorrelativiadadesSection({ materia }: { materia: MateriaCompleta }) {
   return (
     <div>
       <h3 className="text-sm font-semibold text-gray-300 mb-3">Correlatividades</h3>
-      <div className="space-y-2">
+      <div className="space-y-3">
         {materia.regularizadasRequeridas.length > 0 && (
           <div>
-            <p className="text-xs text-gray-500 mb-1 uppercase tracking-wide">Para cursar (regularizadas):</p>
+            <p className="text-xs text-gray-500 mb-1.5 uppercase tracking-wide">
+              Para cursar (regularizadas) ({materia.regularizadasRequeridas.length}):
+            </p>
             <div className="flex flex-wrap gap-1.5">
               {materia.regularizadasRequeridas.map((id) => {
                 const def = getMateriaById(id);
                 return (
-                  <span key={id} className="text-xs px-2 py-1 rounded-lg bg-amber-900/30 border border-amber-700/50 text-amber-300">
+                  <span key={id} className="text-[11px] px-2 py-0.5 rounded-md bg-amber-900/30 border border-amber-700/50 text-amber-300">
                     {def?.nombre ?? id}
                   </span>
                 );
@@ -218,12 +227,14 @@ function CorrelativiadadesSection({ materia }: { materia: MateriaCompleta }) {
         )}
         {materia.aprobadasRequeridas.length > 0 && (
           <div>
-            <p className="text-xs text-gray-500 mb-1 uppercase tracking-wide">Para cursar (aprobadas):</p>
+            <p className="text-xs text-gray-500 mb-1.5 uppercase tracking-wide">
+              Para cursar (aprobadas) ({materia.aprobadasRequeridas.length}):
+            </p>
             <div className="flex flex-wrap gap-1.5">
               {materia.aprobadasRequeridas.map((id) => {
                 const def = getMateriaById(id);
                 return (
-                  <span key={id} className="text-xs px-2 py-1 rounded-lg bg-green-900/30 border border-green-700/50 text-green-300">
+                  <span key={id} className="text-[11px] px-2 py-0.5 rounded-md bg-green-900/30 border border-green-700/50 text-green-300">
                     {def?.nombre ?? id}
                   </span>
                 );
