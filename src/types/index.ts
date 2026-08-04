@@ -36,6 +36,8 @@ export interface MateriaDefinicion {
   tituloRequisitos?: string;
   /** Requisitos adicionales especiales no basados en correlativas estándar */
   requisitoAdicional?: string;
+  /** Descripción o nota informativa adicional de la materia */
+  descripcion?: string;
 }
 
 /**
@@ -49,6 +51,7 @@ export interface ElectivaDefinicion {
   descripcion?: string;
   regularizadasRequeridas: string[];
   aprobadasRequeridas: string[];
+  esPlan2008?: boolean;
 }
 
 /**
@@ -180,3 +183,18 @@ export const NIVELES_NOMBRES: Record<number, string> = {
   4: 'Cuarto Nivel',
   5: 'Quinto Nivel',
 };
+
+// ============================================================
+// TIPOS PARA MI PLAN (PLAN DE ESTUDIO PERSONALIZADO)
+// ============================================================
+
+export type VistaApp = 'plan' | 'mapa' | 'electivas' | 'mi-plan';
+
+export type PeriodoPlan = 'Anual' | '1C' | '2C';
+
+export interface ItemPlanPersonalizado {
+  idMateria: string;
+  anio: number; // 1, 2, 3...
+  periodo: PeriodoPlan;
+}
+

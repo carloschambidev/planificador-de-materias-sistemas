@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { CheckCircle2, Lock, PlusCircle, Trash2 } from 'lucide-react';
+import { PlusCircle, Trash2 } from 'lucide-react';
 import { ELECTIVAS } from '../data/electivas';
 import { useCorrelatividades } from '../hooks/useCorrelatividades';
 import { useCarreraStore } from '../store/useCarreraStore';
@@ -50,8 +50,22 @@ export function VistaElectivas() {
     };
   };
 
-  // Agrupar electivas por área
-  const areas = Array.from(new Set(ELECTIVAS.map(e => e.area)));
+  // Obtener todas las electivas activas del sistema (Plan 2023 y Plan 2008 vigentes)
+  const electivasActivas = ELECTIVAS;
+
+  // Agrupar electivas en las 4 categorías ordenadas
+  const ordenCategorias = [
+    'Sistemas, Procesos y Gestión (Plan 2023)',
+    'Tecnologías Aplicadas y Avanzadas (Plan 2023)',
+    'Materias Transversales',
+    'Electivas Históricas Vigentes (Plan 2008)',
+  ];
+  const areas = Array.from(new Set(electivasActivas.map(e => e.area)))
+    .sort((a, b) => {
+      const idxA = ordenCategorias.indexOf(a);
+      const idxB = ordenCategorias.indexOf(b);
+      return (idxA === -1 ? 99 : idxA) - (idxB === -1 ? 99 : idxB);
+    });
 
   return (
     <motion.div
@@ -74,17 +88,20 @@ export function VistaElectivas() {
       <div className="space-y-10">
         {areas.map((area) => (
           <div key={area} className="space-y-4">
-            <h3 className="text-lg font-semibold text-indigo-300 border-b border-indigo-500/40 pb-3 mb-2">
-              ◆ {area}
-            </h3>
+            <div className="flex items-center justify-between border-b border-indigo-500/40 pb-3 mb-2">
+              <h3 className="text-lg font-semibold text-indigo-300">
+                ◆ {area}
+              </h3>
+              {area.includes('Plan 2008') && (
+                <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-amber-500/15 text-amber-300 border border-amber-500/30">
+                  Plan Histórico Vigente
+                </span>
+              )}
+            </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {ELECTIVAS.filter(e => e.area === area).map((electiva) => {
+              {electivasActivas.filter(e => e.area === area).map((electiva) => {
                 const requisitos = verificarRequisitos(electiva.id);
                 const { habilitada } = requisitos;
-                const requisitosTexto = [
-                  requisitos.regularizadas.length > 0 ? `Regularizadas: ${requisitos.regularizadas.join(', ')}` : '',
-                  requisitos.aprobadas.length > 0 ? `Aprobadas: ${requisitos.aprobadas.join(', ')}` : '',
-                ].filter(Boolean).join(' · ');
                 const slotAsignado = slotsElectivas.find(s => s.estadoDinamico.electivaAsignadaId === electiva.id);
 
                 return (
@@ -102,6 +119,11 @@ export function VistaElectivas() {
                             <span className="text-[10px] font-semibold uppercase tracking-[0.24em] text-indigo-300">
                               Electiva{electiva.codigo ? ` · (${electiva.codigo})` : ''}
                             </span>
+                            {electiva.esPlan2008 && (
+                              <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-amber-500/20 text-amber-300 border border-amber-500/40">
+                                [Plan 2008]
+                              </span>
+                            )}
                             {slotAsignado && (
                               <span className="text-[10px] font-semibold px-2 py-1 rounded-full bg-indigo-900/60 text-indigo-200">
                                 Asignada en Nivel {slotAsignado.nivel}

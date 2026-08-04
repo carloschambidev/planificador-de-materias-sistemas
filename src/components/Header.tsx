@@ -14,13 +14,15 @@ import {
   Map,
   LayoutDashboard,
   BookOpen,
+  Calendar,
 } from 'lucide-react';
 import logoUTN from '../../public/logo_utn.png';
 import { useCarreraStore } from '../store/useCarreraStore';
+import type { VistaApp } from '../types';
 
 interface Props {
-  vistaActual: 'plan' | 'mapa' | 'electivas';
-  onCambiarVista: (vista: 'plan' | 'mapa' | 'electivas') => void;
+  vistaActual: VistaApp;
+  onCambiarVista: (vista: VistaApp) => void;
 }
 
 export function Header({ vistaActual, onCambiarVista }: Props) {
@@ -115,6 +117,12 @@ export function Header({ vistaActual, onCambiarVista }: Props) {
               icon={<BookOpen size={14} />}
               label="Electivas"
             />
+            <TabButton
+              active={vistaActual === 'mi-plan'}
+              onClick={() => onCambiarVista('mi-plan')}
+              icon={<Calendar size={14} />}
+              label="Mi Plan"
+            />
           </div>
 
           {/* Acciones */}
@@ -189,6 +197,12 @@ export function Header({ vistaActual, onCambiarVista }: Props) {
             onClick={() => onCambiarVista('electivas')}
             icon={<BookOpen size={14} />}
             label="Electivas"
+          />
+          <TabButton
+            active={vistaActual === 'mi-plan'}
+            onClick={() => onCambiarVista('mi-plan')}
+            icon={<Calendar size={14} />}
+            label="Mi Plan"
           />
         </div>
       </div>

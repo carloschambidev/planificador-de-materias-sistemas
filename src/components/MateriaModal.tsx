@@ -4,7 +4,7 @@
 // ============================================================
 
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Lock, BookOpen, Clock, StickyNote, AlertTriangle } from 'lucide-react';
+import { X, Lock, BookOpen, Clock, StickyNote } from 'lucide-react';
 import type { MateriaCompleta, EstadoMateria } from '../types';
 import { ESTADO_CONFIG, BLOQUEADA_CONFIG } from '../types';
 import { getMateriaById } from '../data/materias';
@@ -172,6 +172,18 @@ export function MateriaModal({ materia, estadosDisponibles, onClose, onEditar }:
               </div>
             )}
 
+            {/* Descripción e Información */}
+            {materia.descripcion && (
+              <div className="p-3.5 rounded-xl bg-gray-800/50 border border-gray-700">
+                <p className="text-[10px] font-semibold uppercase tracking-wider text-gray-400 mb-1">
+                  Descripción e Información
+                </p>
+                <p className="text-xs leading-relaxed text-gray-200">
+                  {materia.descripcion}
+                </p>
+              </div>
+            )}
+
             {/* Correlatividades */}
             <CorrelativiadadesSection materia={materia} />
 
@@ -200,14 +212,27 @@ export function MateriaModal({ materia, estadosDisponibles, onClose, onEditar }:
 function CorrelativiadadesSection({ materia }: { materia: MateriaCompleta }) {
   const tieneReqs =
     materia.regularizadasRequeridas.length > 0 ||
-    materia.aprobadasRequeridas.length > 0;
+    materia.aprobadasRequeridas.length > 0 ||
+    Boolean(materia.requisitoAdicional);
 
   if (!tieneReqs) return null;
 
   return (
     <div>
-      <h3 className="text-sm font-semibold text-gray-300 mb-3">Correlatividades</h3>
+      <h3 className="text-sm font-semibold text-gray-300 mb-3">
+        {materia.tituloRequisitos ?? 'Correlatividades y Requisitos'}
+      </h3>
       <div className="space-y-3">
+        {materia.requisitoAdicional && (
+          <div className="p-3.5 rounded-xl bg-purple-950/70 border border-purple-500/60 text-purple-200 shadow-lg shadow-purple-950/30">
+            <p className="text-[11px] font-bold uppercase tracking-wider text-purple-300 mb-1.5 flex items-center gap-1.5">
+              <span>★</span> Requisito para Aprobar (Examen Final):
+            </p>
+            <p className="text-xs leading-relaxed font-semibold text-purple-100">
+              {materia.requisitoAdicional}
+            </p>
+          </div>
+        )}
         {materia.regularizadasRequeridas.length > 0 && (
           <div>
             <p className="text-xs text-gray-500 mb-1.5 uppercase tracking-wide">

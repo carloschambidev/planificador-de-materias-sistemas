@@ -4,7 +4,13 @@
 
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
-import type { EstadoMateria, EstadoDinamico, DuracionMateria } from '../types';
+import type { 
+  EstadoMateria, 
+  EstadoDinamico, 
+  DuracionMateria, 
+  ItemPlanPersonalizado, 
+  PeriodoPlan 
+} from '../types';
 import { MATERIAS } from '../data/materias';
 
 /** Clave usada en LocalStorage */
@@ -14,6 +20,11 @@ interface CarreraStore {
   /** Mapa de ID de materia → estado dinámico */
   estadoMaterias: Record<string, EstadoDinamico>;
 
+  /** Plan personalizado del usuario (Mi Plan) */
+  planPersonalizado: ItemPlanPersonalizado[];
+  /** Número total de años en el tablero de Mi Plan */
+  totalAniosPlan: number;
+
   /** Acciones */
   setEstado: (id: string, estado: EstadoMateria) => void;
   setNombrePersonalizado: (id: string, nombre: string) => void;
@@ -21,6 +32,13 @@ interface CarreraStore {
   setNotas: (id: string, notas: string) => void;
   asignarElectiva: (materiaSlotId: string, electivaId: string) => void;
   resetearTodo: () => void;
+
+  /** Acciones para Mi Plan */
+  agregarAlPlan: (idMateria: string, anio: number, periodo: PeriodoPlan) => void;
+  moverEnPlan: (idMateria: string, anio: number, periodo: PeriodoPlan) => void;
+  removerDelPlan: (idMateria: string) => void;
+  agregarAnioPlan: () => void;
+  limpiarPlanPersonalizado: () => void;
 
   /** Importar/Exportar */
   exportarJSON: () => string;
@@ -46,6 +64,8 @@ export const useCarreraStore = create<CarreraStore>()(
   persist(
     (set, get) => ({
       estadoMaterias: crearEstadoInicial(),
+      planPersonalizado: [],
+      totalAniosPlan: 5,
 
       setEstado: (id, estado) => {
         set((s) => ({
@@ -92,15 +112,55 @@ export const useCarreraStore = create<CarreraStore>()(
         }));
       },
 
+      agregarAlPlan: (idMateria, anio, periodo) => {
+        set((s) => {
+          const filtrado = s.planPersonalizado.filter((item) => item.idMateria !== idMateria);
+          return {
+            planPersonalizado: [...filtrado, { idMateria, anio, periodo }],
+          };
+        });
+      },
+
+      moverEnPlan: (idMateria, anio, periodo) => {
+        set((s) => {
+          const filtrado = s.planPersonalizado.filter((item) => item.idMateria !== idMateria);
+          return {
+            planPersonalizado: [...filtrado, { idMateria, anio, periodo }],
+          };
+        });
+      },
+
+      removerDelPlan: (idMateria) => {
+        set((s) => ({
+          planPersonalizado: s.planPersonalizado.filter((item) => item.idMateria !== idMateria),
+        }));
+      },
+
+      agregarAnioPlan: () => {
+        set((s) => ({
+          totalAniosPlan: s.totalAniosPlan + 1,
+        }));
+      },
+
+      limpiarPlanPersonalizado: () => {
+        set({ planPersonalizado: [] });
+      },
+
       resetearTodo: () => {
-        set({ estadoMaterias: crearEstadoInicial() });
+        set({ 
+          estadoMaterias: crearEstadoInicial(),
+          planPersonalizado: [],
+          totalAniosPlan: 5,
+        });
       },
 
       exportarJSON: () => {
         const data = {
-          version: 1,
+          version: 2,
           exportadoEn: new Date().toISOString(),
           estadoMaterias: get().estadoMaterias,
+          planPersonalizado: get().planPersonalizado,
+          totalAniosPlan: get().totalAniosPlan,
         };
         return JSON.stringify(data, null, 2);
       },
@@ -109,10 +169,13 @@ export const useCarreraStore = create<CarreraStore>()(
         try {
           const data = JSON.parse(json);
           if (data.estadoMaterias && typeof data.estadoMaterias === 'object') {
-            // Merge con el estado inicial para no perder materias nuevas
             const estadoBase = crearEstadoInicial();
             const merged = { ...estadoBase, ...data.estadoMaterias };
-            set({ estadoMaterias: merged });
+            set({ 
+              estadoMaterias: merged,
+              planPersonalizado: Array.isArray(data.planPersonalizado) ? data.planPersonalizado : [],
+              totalAniosPlan: typeof data.totalAniosPlan === 'number' ? data.totalAniosPlan : 5,
+            });
           } else {
             throw new Error('Formato inválido');
           }
@@ -122,7 +185,6 @@ export const useCarreraStore = create<CarreraStore>()(
       },
 
       // ── Google Drive stubs ──────────────────────────────────
-      // TODO: Implementar OAuth de Google y Drive API
       guardarEnDrive: async () => {
         const json = get().exportarJSON();
         console.log('[Drive] Simulando guardado en Drive:', json.length, 'bytes');

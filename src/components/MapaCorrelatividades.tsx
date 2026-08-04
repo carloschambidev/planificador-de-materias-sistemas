@@ -6,7 +6,7 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Lock, Clock, BookOpen, ChevronRight } from 'lucide-react';
+import { X, Lock, Clock, BookOpen } from 'lucide-react';
 import type { MateriaCompleta } from '../types';
 import { ESTADO_CONFIG, BLOQUEADA_CONFIG, NIVELES_NOMBRES } from '../types';
 import { getMateriaById } from '../data/materias';
@@ -240,9 +240,31 @@ function DetalleModal({ materia, onClose }: { materia: MateriaCompleta; onClose:
                 </div>
               )}
 
-              {/* Correlatividades */}
-              {(materia.regularizadasRequeridas.length > 0 || materia.aprobadasRequeridas.length > 0) && (
+              {/* Descripción */}
+              {materia.descripcion && (
+                <div className="p-3 rounded-xl bg-gray-50 border border-gray-200">
+                  <p className="text-[10px] font-semibold uppercase tracking-wide text-gray-500 mb-1">
+                    Información de Acreditación
+                  </p>
+                  <p className="text-xs leading-relaxed text-gray-700">
+                    {materia.descripcion}
+                  </p>
+                </div>
+              )}
+
+              {/* Correlatividades y Requisitos */}
+              {(materia.regularizadasRequeridas.length > 0 || materia.aprobadasRequeridas.length > 0 || materia.requisitoAdicional) && (
                 <div className="space-y-3">
+                  {materia.requisitoAdicional && (
+                    <div className="p-3 rounded-xl bg-purple-50 border border-purple-300 text-purple-900">
+                      <p className="text-[10px] font-bold uppercase tracking-wide text-purple-700 mb-1 flex items-center gap-1">
+                        <span>★</span> Para Aprobar (Examen Final):
+                      </p>
+                      <p className="text-xs font-semibold leading-relaxed">
+                        {materia.requisitoAdicional}
+                      </p>
+                    </div>
+                  )}
                   {materia.regularizadasRequeridas.length > 0 && (
                     <div>
                       <p className="text-[10px] font-semibold uppercase tracking-wide text-gray-400 mb-1">

@@ -4,9 +4,22 @@
 // ============================================================
 
 import { motion } from 'framer-motion';
-import { Lock, BookOpen, Clock, ChevronRight } from 'lucide-react';
+import { BookOpen, Clock, ChevronRight } from 'lucide-react';
 import type { MateriaCompleta } from '../types';
 import { ESTADO_CONFIG, BLOQUEADA_CONFIG } from '../types';
+import { getMateriaById } from '../data/materias';
+
+function formatCorrelativasLista(ids: string[], maxVisible = 3): string {
+  if (!ids || ids.length === 0) return '';
+  const codigos = ids.map((id) => getMateriaById(id)?.codigo ?? id.toUpperCase());
+  if (codigos.length <= maxVisible) {
+    return codigos.join(', ');
+  }
+  const visibles = codigos.slice(0, maxVisible).join(', ');
+  const restantes = codigos.length - maxVisible;
+  const textoMaterias = restantes === 1 ? 'materia' : 'materias';
+  return `${visibles}... (+${restantes} ${textoMaterias})`;
+}
 
 interface Props {
   materia: MateriaCompleta;
@@ -63,6 +76,42 @@ export function MateriaCard({ materia, onClick }: Props) {
       >
         {materia.nombre}
       </h3>
+
+      {/* Correlatividades requeridas (con truncado a 3 elementos) y requisitos adicionales */}
+      {(materia.regularizadasRequeridas.length > 0 || materia.aprobadasRequeridas.length > 0 || materia.requisitoAdicional) && (
+        <div className="text-[11px] space-y-0.5 border-t border-gray-800/60 pt-1.5 my-0.5">
+          {materia.regularizadasRequeridas.length > 0 && (
+            <p
+              className="leading-tight truncate text-gray-300"
+              title={`Regularizadas: ${materia.regularizadasRequeridas
+                .map((id) => getMateriaById(id)?.codigo ?? id)
+                .join(', ')}`}
+            >
+              <span className="font-semibold text-amber-400">Reg:</span>{' '}
+              {formatCorrelativasLista(materia.regularizadasRequeridas, 3)}
+            </p>
+          )}
+          {materia.aprobadasRequeridas.length > 0 && (
+            <p
+              className="leading-tight truncate text-gray-300"
+              title={`Aprobadas: ${materia.aprobadasRequeridas
+                .map((id) => getMateriaById(id)?.codigo ?? id)
+                .join(', ')}`}
+            >
+              <span className="font-semibold text-emerald-400">Apr:</span>{' '}
+              {formatCorrelativasLista(materia.aprobadasRequeridas, 3)}
+            </p>
+          )}
+          {materia.requisitoAdicional && (
+            <p
+              className="leading-tight text-purple-300 font-medium italic line-clamp-2 mt-0.5"
+              title={materia.requisitoAdicional}
+            >
+              <span className="font-semibold text-purple-400">★ Para aprobar:</span> Todas las materias del plan (sin electivas)
+            </p>
+          )}
+        </div>
+      )}
 
       {/* Metadata */}
       <div className="flex items-center gap-3 mt-auto">

@@ -12,15 +12,16 @@ import { EditarMateriaModal } from './components/EditarMateriaModal';
 import { MapaCorrelatividades } from './components/MapaCorrelatividades';
 import { Leyenda } from './components/Leyenda';
 import { VistaElectivas } from './components/VistaElectivas';
+import { MiPlanView } from './components/MiPlan/MiPlanView';
 import { useCorrelatividades, useEstadisticas } from './hooks/useCorrelatividades';
-import type { MateriaCompleta } from './types';
+import type { MateriaCompleta, VistaApp } from './types';
 import { FileText } from 'lucide-react';
 
 export default function App() {
   const { materias, getMateriaCompleta, getEstadosDisponibles } = useCorrelatividades();
   const stats = useEstadisticas(materias);
 
-  const [vista, setVista] = useState<'plan' | 'mapa' | 'electivas'>('plan');
+  const [vista, setVista] = useState<VistaApp>('plan');
   const [materiaSeleccionada, setMateriaSeleccionada] = useState<MateriaCompleta | null>(null);
   const [materiaEditar, setMateriaEditar] = useState<MateriaCompleta | null>(null);
 
@@ -131,8 +132,18 @@ export default function App() {
                 <MapaCorrelatividades materias={materias} />
               </div>
             </motion.div>
-          ) : (
+          ) : vista === 'electivas' ? (
             <VistaElectivas key="electivas" />
+          ) : (
+            <motion.div
+              key="mi-plan"
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              transition={{ duration: 0.3 }}
+            >
+              <MiPlanView />
+            </motion.div>
           )}
         </AnimatePresence>
 

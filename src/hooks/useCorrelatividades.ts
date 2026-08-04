@@ -10,7 +10,6 @@ import { getElectivaById } from '../data/electivas';
 import {
   cuentaComoAprobada,
   cuentaComoRegularizada,
-  TRANSICIONES_VALIDAS,
   type EstadoMateria,
   type MateriaCompleta,
 } from '../types';

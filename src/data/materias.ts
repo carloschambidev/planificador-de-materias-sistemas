@@ -406,7 +406,9 @@ export const MATERIAS: MateriaDefinicion[] = [
     horas: '6Hs',
     regularizadasRequeridas: ['ics', 'adm', 'rdd'],
     aprobadasRequeridas: ['ing2', 'ds', 'dsi'],
-    requisitoAdicional: 'Final: Todas las Materias (Última Exigencia Académica)',
+    tituloRequisitos: 'Requisitos para Cursar y Aprobar:',
+    requisitoAdicional: 'Para APROBAR el Proyecto Final es necesario tener aprobadas todas las materias del plan de estudio (sin contar electivas).',
+    descripcion: 'Para cursar se requieren las correlativas indicadas. Para APROBAR el Proyecto Final es requisito obligatorio tener aprobadas todas las materias del plan de estudio, sin contar electivas.',
   },
   {
     id: 'ia',
