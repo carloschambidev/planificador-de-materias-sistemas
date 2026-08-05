@@ -173,6 +173,12 @@ export function exportarMiPlanPDF(
     alternateRowStyles: {
       fillColor: [248, 250, 252], // Slate-50 suave para fácil lectura
     },
+    didParseCell: (data: any) => {
+      if (data.section === 'body' && data.cell.raw && data.cell.raw.esElectiva) {
+        // Aumentar el padding superior para evitar que el texto colisione con la etiqueta de Electiva
+        data.cell.styles.cellPadding = { top: 6, right: 2, bottom: 2, left: 2 };
+      }
+    },
     didDrawCell: (data: any) => {
       // Dibujar etiqueta de Electiva si corresponde
       if (data.section === 'body' && data.cell.raw && data.cell.raw.esElectiva) {
