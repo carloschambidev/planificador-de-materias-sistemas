@@ -412,9 +412,9 @@ export function MapaCorrelatividades({ materias }: Props) {
         })}
       </div>
 
-      {/* Tabla de niveles — scroll horizontal en mobile */}
-      <div className="overflow-x-auto">
-        <div className="flex gap-3 w-full min-w-max">
+      {/* Tabla de niveles — Grilla responsiva para evitar scroll horizontal */}
+      <div className="w-full">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-3 w-full">
           {[1, 2, 3, 4, 5].map(nivel => {
             const cols = porNivel.get(nivel) ?? [];
             const nh = NIVEL_HEADER[nivel];
@@ -423,7 +423,7 @@ export function MapaCorrelatividades({ materias }: Props) {
             ).length;
 
             return (
-              <div key={nivel} className="flex flex-col flex-1 min-w-[160px]">
+              <div key={nivel} className="flex flex-col w-full">
                 {/* Encabezado nivel */}
                 <div
                   className="rounded-xl px-3 py-2.5 mb-2 text-center border"
