@@ -38,6 +38,7 @@ interface CarreraStore {
   moverEnPlan: (idMateria: string, anio: number, periodo: PeriodoPlan) => void;
   removerDelPlan: (idMateria: string) => void;
   agregarAnioPlan: () => void;
+  removerAnioPlan: () => void;
   limpiarPlanPersonalizado: () => void;
 
   /** Importar/Exportar */
@@ -140,6 +141,17 @@ export const useCarreraStore = create<CarreraStore>()(
         set((s) => ({
           totalAniosPlan: s.totalAniosPlan + 1,
         }));
+      },
+
+      removerAnioPlan: () => {
+        set((s) => {
+          if (s.totalAniosPlan <= 5) return s;
+          const targetAnio = s.totalAniosPlan;
+          return {
+            totalAniosPlan: s.totalAniosPlan - 1,
+            planPersonalizado: s.planPersonalizado.filter((item) => item.anio !== targetAnio),
+          };
+        });
       },
 
       limpiarPlanPersonalizado: () => {

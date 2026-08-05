@@ -29,6 +29,7 @@ export function MiPlanView() {
     moverEnPlan,
     removerDelPlan,
     agregarAnioPlan,
+    removerAnioPlan,
     limpiarPlanPersonalizado,
   } = useCarreraStore();
 
@@ -212,6 +213,7 @@ export function MiPlanView() {
         onAsignarMateria={handleAsignarMateria}
         onRemoveMateria={removerDelPlan}
         onAgregarAnio={agregarAnioPlan}
+        onRemoverAnio={removerAnioPlan}
       />
 
       {/* Banner Flotante / Sticky Inferior al Seleccionar una Materia */}
