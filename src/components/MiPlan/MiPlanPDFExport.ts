@@ -6,13 +6,14 @@
 
 import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
-import type { ItemPlanPersonalizado, PeriodoPlan } from '../../types';
+import type { ItemPlanPersonalizado, PeriodoPlan, MateriaCompleta } from '../../types';
 import { getMateriaById } from '../../data/materias';
 import { parsearHoras } from '../../hooks/usePlanificador';
 
 export function exportarMiPlanPDF(
   itemsPlan: ItemPlanPersonalizado[],
-  totalAniosPlan: number
+  totalAniosPlan: number,
+  getMateriaCompleta: (id: string) => MateriaCompleta | undefined
 ): void {
   // Utilizamos orientación apaisada ('landscape') para que las columnas de años académicos
   // tengan amplitud visual como en las cartas curriculares oficiales.
@@ -85,13 +86,13 @@ export function exportarMiPlanPDF(
         if (perOrden[a.periodo] !== perOrden[b.periodo]) {
           return perOrden[a.periodo] - perOrden[b.periodo];
         }
-        const m1 = getMateriaById(a.idMateria)?.nombre ?? a.idMateria;
-        const m2 = getMateriaById(b.idMateria)?.nombre ?? b.idMateria;
+        const m1 = getMateriaCompleta(a.idMateria)?.nombre ?? a.idMateria;
+        const m2 = getMateriaCompleta(b.idMateria)?.nombre ?? b.idMateria;
         return m1.localeCompare(m2);
       });
 
     materiasPorAnio[anio] = itemsAnio.map((item) => {
-      const def = getMateriaById(item.idMateria);
+      const def = getMateriaCompleta(item.idMateria);
       const nombre = def?.nombre ?? item.idMateria;
       const codigo = def?.codigo ?? '';
       const periodoTexto =
@@ -101,7 +102,10 @@ export function exportarMiPlanPDF(
           ? '1º Cuat.'
           : '2º Cuat.';
       const horasTexto = def?.horas ? ` • ${def.horas}` : '';
-      return `${nombre}\n[${codigo}] • ${periodoTexto}${horasTexto}`;
+      return {
+        content: `${nombre}\n[${codigo}] • ${periodoTexto}${horasTexto}`,
+        esElectiva: def?.esElectiva
+      } as any;
     });
 
     if (materiasPorAnio[anio].length > maxFilas) {
@@ -113,9 +117,9 @@ export function exportarMiPlanPDF(
   if (maxFilas === 0) maxFilas = 1;
 
   // Construir matriz fila por fila (cada celda corresponde a la materia del i-ésimo año)
-  const bodyData: string[][] = [];
+  const bodyData: any[][] = [];
   for (let r = 0; r < maxFilas; r++) {
-    const fila: string[] = [];
+    const fila: any[] = [];
     for (const anio of anios) {
       fila.push(materiasPorAnio[anio][r] ?? '');
     }
@@ -144,8 +148,8 @@ export function exportarMiPlanPDF(
     theme: 'grid',
     styles: {
       font: 'helvetica',
-      fontSize: 8.5,
-      cellPadding: 4,
+      fontSize: 7.5,
+      cellPadding: 2,
       textColor: [30, 41, 59],
       halign: 'center',
       valign: 'middle',
@@ -169,6 +173,20 @@ export function exportarMiPlanPDF(
     alternateRowStyles: {
       fillColor: [248, 250, 252], // Slate-50 suave para fácil lectura
     },
+    didDrawCell: (data: any) => {
+      // Dibujar etiqueta de Electiva si corresponde
+      if (data.section === 'body' && data.cell.raw && data.cell.raw.esElectiva) {
+        doc.setFontSize(5);
+        doc.setFillColor(147, 51, 234); // Purple-600
+        const labelWidth = 12;
+        const labelHeight = 3;
+        const x = data.cell.x + data.cell.width - labelWidth - 1;
+        const y = data.cell.y + 1;
+        doc.roundedRect(x, y, labelWidth, labelHeight, 0.5, 0.5, 'F');
+        doc.setTextColor(255, 255, 255);
+        doc.text('ELECTIVA', x + 6, y + 2.2, { align: 'center' });
+      }
+    }
   });
 
   // Descargar el archivo PDF

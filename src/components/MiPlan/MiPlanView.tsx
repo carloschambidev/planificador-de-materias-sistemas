@@ -166,7 +166,7 @@ export function MiPlanView() {
                 alert('Agrega materias al tablero antes de descargar el reporte PDF.');
                 return;
               }
-              exportarMiPlanPDF(planPersonalizado, totalAniosPlan);
+              exportarMiPlanPDF(planPersonalizado, totalAniosPlan, getMateriaCompleta);
             }}
             className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-indigo-600 to-indigo-500 hover:from-indigo-500 hover:to-indigo-600 text-white text-xs font-bold shadow-lg shadow-indigo-600/30 border border-indigo-400/40 transition-all hover:scale-[1.02] active:scale-[0.98]"
           >
