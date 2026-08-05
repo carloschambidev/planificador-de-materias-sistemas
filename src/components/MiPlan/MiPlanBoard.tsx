@@ -11,10 +11,13 @@ import type { AlertaCorrelativa, TermometroConfig } from '../../hooks/usePlanifi
 interface Props {
   totalAniosPlan: number;
   itemsPlan: ItemPlanPersonalizado[];
+  materiaSeleccionada: MateriaCompleta | null;
   getMateriaCompleta: (id: string) => MateriaCompleta | undefined;
   getAlertaCorrelativas: (idMateria: string, anio: number, periodo: PeriodoPlan) => AlertaCorrelativa;
   getHorasCuatrimestre: (anio: number, cuatrimestre: '1C' | '2C') => number;
   getNivelTermometro: (horas: number) => TermometroConfig;
+  onSelectMateria: (materia: MateriaCompleta) => void;
+  onAsignarMateria: (idMateria: string, anio: number, periodo: PeriodoPlan) => void;
   onRemoveMateria: (idMateria: string) => void;
   onAgregarAnio: () => void;
 }
@@ -22,10 +25,13 @@ interface Props {
 export function MiPlanBoard({
   totalAniosPlan,
   itemsPlan,
+  materiaSeleccionada,
   getMateriaCompleta,
   getAlertaCorrelativas,
   getHorasCuatrimestre,
   getNivelTermometro,
+  onSelectMateria,
+  onAsignarMateria,
   onRemoveMateria,
   onAgregarAnio,
 }: Props) {
@@ -41,10 +47,13 @@ export function MiPlanBoard({
             key={anio}
             anio={anio}
             itemsPlan={itemsPlan}
+            materiaSeleccionada={materiaSeleccionada}
             getMateriaCompleta={getMateriaCompleta}
             getAlertaCorrelativas={getAlertaCorrelativas}
             getHorasCuatrimestre={getHorasCuatrimestre}
             getNivelTermometro={getNivelTermometro}
+            onSelectMateria={onSelectMateria}
+            onAsignarMateria={onAsignarMateria}
             onRemoveMateria={onRemoveMateria}
           />
         ))}

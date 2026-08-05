@@ -11,20 +11,26 @@ import type { AlertaCorrelativa, TermometroConfig } from '../../hooks/usePlanifi
 interface Props {
   anio: number;
   itemsPlan: ItemPlanPersonalizado[];
+  materiaSeleccionada: MateriaCompleta | null;
   getMateriaCompleta: (id: string) => MateriaCompleta | undefined;
   getAlertaCorrelativas: (idMateria: string, anio: number, periodo: PeriodoPlan) => AlertaCorrelativa;
   getHorasCuatrimestre: (anio: number, cuatrimestre: '1C' | '2C') => number;
   getNivelTermometro: (horas: number) => TermometroConfig;
+  onSelectMateria: (materia: MateriaCompleta) => void;
+  onAsignarMateria: (idMateria: string, anio: number, periodo: PeriodoPlan) => void;
   onRemoveMateria: (idMateria: string) => void;
 }
 
 export function MiPlanYearColumn({
   anio,
   itemsPlan,
+  materiaSeleccionada,
   getMateriaCompleta,
   getAlertaCorrelativas,
   getHorasCuatrimestre,
   getNivelTermometro,
+  onSelectMateria,
+  onAsignarMateria,
   onRemoveMateria,
 }: Props) {
   // Obtener las materias asignadas a este año para cada uno de los 3 períodos
@@ -67,14 +73,17 @@ export function MiPlanYearColumn({
         </div>
       </div>
 
-      {/* Las 3 Zonas Droppable: Anual, 1C y 2C */}
+      {/* Las 3 Zonas de Asignación por Período: Anual, 1C y 2C */}
       <div className="space-y-3.5 flex-1 flex flex-col justify-between">
         <MiPlanDropZone
           anio={anio}
           periodo="Anual"
           items={materiasAnuales}
           termometro={termometro1C}
+          materiaSeleccionada={materiaSeleccionada}
           getAlertaCorrelativas={getAlertaCorrelativas}
+          onSelectMateria={onSelectMateria}
+          onAsignarMateria={onAsignarMateria}
           onRemoveMateria={onRemoveMateria}
         />
 
@@ -83,7 +92,10 @@ export function MiPlanYearColumn({
           periodo="1C"
           items={materias1C}
           termometro={termometro1C}
+          materiaSeleccionada={materiaSeleccionada}
           getAlertaCorrelativas={getAlertaCorrelativas}
+          onSelectMateria={onSelectMateria}
+          onAsignarMateria={onAsignarMateria}
           onRemoveMateria={onRemoveMateria}
         />
 
@@ -92,7 +104,10 @@ export function MiPlanYearColumn({
           periodo="2C"
           items={materias2C}
           termometro={termometro2C}
+          materiaSeleccionada={materiaSeleccionada}
           getAlertaCorrelativas={getAlertaCorrelativas}
+          onSelectMateria={onSelectMateria}
+          onAsignarMateria={onAsignarMateria}
           onRemoveMateria={onRemoveMateria}
         />
       </div>

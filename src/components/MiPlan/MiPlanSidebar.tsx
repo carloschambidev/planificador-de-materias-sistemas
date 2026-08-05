@@ -10,9 +10,15 @@ import type { MateriaCompleta } from '../../types';
 
 interface Props {
   materiasDisponibles: MateriaCompleta[];
+  materiaSeleccionada: MateriaCompleta | null;
+  onSelectMateria: (materia: MateriaCompleta) => void;
 }
 
-export function MiPlanSidebar({ materiasDisponibles }: Props) {
+export function MiPlanSidebar({
+  materiasDisponibles,
+  materiaSeleccionada,
+  onSelectMateria,
+}: Props) {
   const [busqueda, setBusqueda] = useState('');
   const [nivelFiltro, setNivelFiltro] = useState<number | 'todos'>('todos');
 
@@ -45,7 +51,7 @@ export function MiPlanSidebar({ materiasDisponibles }: Props) {
               </span>
             </div>
             <p className="text-xs text-gray-400 mt-0.5">
-              Desliza horizontalmente y arrastra las materias hacia tu tabla académica inferior
+              Haz clic o toca una materia para seleccionarla y luego elige el año y cuatrimestre en la tabla inferior
             </p>
           </div>
         </div>
@@ -103,18 +109,20 @@ export function MiPlanSidebar({ materiasDisponibles }: Props) {
       </div>
 
       {/* Carrusel Horizontal Deslizante */}
-      <div className="overflow-x-auto pb-2 scrollbar-thin">
+      <div className="overflow-x-auto py-3 px-2 -mx-1 scrollbar-thin">
         {materiasFiltradas.length === 0 ? (
           <div className="py-8 text-center text-gray-500 text-xs font-medium border border-dashed border-gray-800 rounded-xl">
             No se encontraron materias pendientes con tu filtro.
           </div>
         ) : (
-          <div className="flex items-stretch gap-3">
+          <div className="flex items-stretch gap-3.5">
             {materiasFiltradas.map((materia) => (
               <MiPlanCard
                 key={materia.id}
                 materia={materia}
                 enTablero={false}
+                isSelected={materiaSeleccionada?.id === materia.id}
+                onSelect={() => onSelectMateria(materia)}
               />
             ))}
           </div>
