@@ -2,20 +2,27 @@
 // APP PRINCIPAL – Planificador de Materias UTN FRBA
 // ============================================================
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Header } from './components/Header';
-import { EstadisticasPanel } from './components/EstadisticasPanel';
-import { NivelSection } from './components/NivelSection';
-import { MateriaModal } from './components/MateriaModal';
-import { EditarMateriaModal } from './components/EditarMateriaModal';
-import { MapaCorrelatividades } from './components/MapaCorrelatividades';
-import { Leyenda } from './components/Leyenda';
-import { VistaElectivas } from './components/VistaElectivas';
-import { MiPlanView } from './components/MiPlan/MiPlanView';
-import { useCorrelatividades, useEstadisticas } from './hooks/useCorrelatividades';
-import type { MateriaCompleta, VistaApp } from './types';
-import { FileText } from 'lucide-react';
+import { Header } from './shared/components/Header';
+import { EstadisticasPanel } from './shared/components/EstadisticasPanel';
+import { NivelSection } from './features/plan-estudios/components/NivelSection';
+import { MateriaModal } from './features/plan-estudios/components/MateriaModal';
+import { EditarMateriaModal } from './features/plan-estudios/components/EditarMateriaModal';
+import { MapaCorrelatividades } from './features/mapa-correlatividades/components/MapaCorrelatividades';
+import { VistaElectivas } from './features/electivas/components/VistaElectivas';
+import { MiPlanView } from './features/mi-plan/components/MiPlanView';
+import { useCorrelatividades, useEstadisticas } from './core/hooks/useCorrelatividades';
+import type { MateriaCompleta, VistaApp } from './core/types';
+// No need for Download anymore since the PDF button was moved to StatsBar
+
+
+const Footer = () => (
+  <footer className="text-center py-4 text-xs text-muted border-t border-border mt-8">
+    UTN FRBA · Ingeniería en Sistemas de Información ·{' '}
+    <span className="text-blue-500">Planificador Personal</span>
+  </footer>
+);
 
 export default function App() {
   const { materias, getMateriaCompleta, getEstadosDisponibles } = useCorrelatividades();
@@ -25,16 +32,15 @@ export default function App() {
   const [materiaSeleccionada, setMateriaSeleccionada] = useState<MateriaCompleta | null>(null);
   const [materiaEditar, setMateriaEditar] = useState<MateriaCompleta | null>(null);
 
-  // Organizar materias por nivel
-  const materiasPorNivel = new Map<number, MateriaCompleta[]>();
-  for (const m of materias) {
-    if (!materiasPorNivel.has(m.nivel)) materiasPorNivel.set(m.nivel, []);
-    materiasPorNivel.get(m.nivel)!.push(m);
-  }
-
-  const handleClickMateria = (materia: MateriaCompleta) => {
-    setMateriaSeleccionada(materia);
-  };
+  // Memoize grouped subjects to avoid recalculating on every render
+  const materiasPorNivel = useMemo(() => {
+    return materias.reduce((acc, materia) => {
+      const nivel = materia.nivel;
+      if (!acc[nivel]) acc[nivel] = [];
+      acc[nivel].push(materia);
+      return acc;
+    }, {} as Record<number, MateriaCompleta[]>);
+  }, [materias]);
 
   const handleEditar = () => {
     if (materiaSeleccionada) {
@@ -43,137 +49,127 @@ export default function App() {
     }
   };
 
-  // Obtener versión fresca de la materia seleccionada (por si cambió el estado)
+  // Fresh version of the selected subject
   const materiaModal = materiaSeleccionada
     ? getMateriaCompleta(materiaSeleccionada.id) ?? materiaSeleccionada
     : null;
 
+  // Render function for clean view switching
+  const renderVistaContent = () => {
+    switch (vista) {
+      case 'plan':
+        return (
+          <motion.div
+            key="plan"
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: 20 }}
+            transition={{ duration: 0.3 }}
+            className="space-y-4"
+          >
+
+
+            {[1, 2, 3, 4, 5].map((nivel) => {
+              const materiasNivel = materiasPorNivel[nivel];
+              if (!materiasNivel?.length) return null;
+              
+              return (
+                <NivelSection
+                  key={nivel}
+                  nivel={nivel}
+                  materias={materiasNivel}
+                  onClickMateria={setMateriaSeleccionada}
+                />
+              );
+            })}
+          </motion.div>
+        );
+
+      case 'mapa':
+        return (
+          <motion.div
+            key="mapa"
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -20 }}
+            transition={{ duration: 0.3 }}
+          >
+            <div className="hidden md:block mb-4">
+              <h2 className="text-lg sm:text-xl font-bold text-primary uppercase tracking-wider text-center">
+                Plan de Estudio 2023
+              </h2>
+            </div>
+            <div className="relative">
+              <MapaCorrelatividades materias={materias} />
+            </div>
+          </motion.div>
+        );
+
+      case 'electivas':
+        return <VistaElectivas key="electivas" />;
+
+      case 'mi-plan':
+        return (
+          <motion.div
+            key="mi-plan"
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -20 }}
+            transition={{ duration: 0.3 }}
+          >
+            <MiPlanView />
+          </motion.div>
+        );
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-gray-950 text-white font-sans">
-      {/* Fondo decorativo */}
-      <div className="fixed inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-indigo-900/10 rounded-full blur-3xl" />
-        <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] bg-violet-900/10 rounded-full blur-3xl" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-blue-950/5 rounded-full blur-3xl" />
+    <div className="min-h-screen bg-slate-50 dark:bg-[#050505] text-slate-900 dark:text-slate-50 font-sans relative transition-colors duration-300">
+      
+      {/* Ambient Glow (Dark Mode Only) */}
+      <div className="hidden dark:block fixed inset-0 z-0 overflow-hidden pointer-events-none">
+        <div className="absolute -top-40 -left-40 w-96 h-96 bg-blue-600/15 rounded-full blur-[120px]" />
+        <div className="absolute top-1/2 right-0 w-96 h-96 bg-rose-700/15 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/3" />
+        <div className="absolute -bottom-40 left-1/4 w-96 h-96 bg-purple-600/10 rounded-full blur-[120px]" />
       </div>
 
-      {/* Header */}
-      <Header vistaActual={vista} onCambiarVista={setVista} />
+      <div className="relative z-10">
+        <Header vistaActual={vista} onCambiarVista={setVista} />
 
-      {/* Main content */}
-      <main className="relative max-w-screen-2xl mx-auto px-4 sm:px-6 py-6 space-y-6">
-        {/* Estadísticas solo visibles en la vista de plan */}
-        {vista === 'plan' && <EstadisticasPanel stats={stats} />}
+        <main className="relative max-w-screen-2xl mx-auto px-4 sm:px-6 py-6 md:py-8 space-y-6">
+          <div className="text-center pb-2 text-xs font-semibold uppercase tracking-widest text-slate-500 dark:text-slate-400 md:hidden">
+            {{ plan: 'Progreso', mapa: 'Plan de Estudios', electivas: 'Electivas', 'mi-plan': 'Mi Plan' }[vista]}
+          </div>
 
-        {/* Vista */}
-        <AnimatePresence mode="wait">
-          {vista === 'plan' ? (
-            <motion.div
-              key="plan"
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: 20 }}
-              transition={{ duration: 0.3 }}
-              className="space-y-4"
-            >
-              {/* Leyenda */}
-              <div className="flex items-center justify-between">
-                <h2 className="text-lg sm:text-xl font-bold text-indigo-300 uppercase tracking-wider">
-                  Plan de Estudios
-                </h2>
-              </div>
-              <div className="p-3 rounded-xl bg-gray-900/60 border border-gray-800">
-                <p className="text-xs text-gray-500 mb-2 font-medium">Leyenda de estados:</p>
-                <Leyenda />
-              </div>
+          {vista === 'plan' && <EstadisticasPanel stats={stats} />}
 
-              {/* Niveles */}
-              {[1, 2, 3, 4, 5].map((nivel) => {
-                const materiasNivel = materiasPorNivel.get(nivel) ?? [];
-                if (materiasNivel.length === 0) return null;
-                return (
-                  <NivelSection
-                    key={nivel}
-                    nivel={nivel}
-                    materias={materiasNivel}
-                    onClickMateria={handleClickMateria}
-                  />
-                );
-              })}
-            </motion.div>
-          ) : vista === 'mapa' ? (
-            <motion.div
-              key="mapa"
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -20 }}
-              transition={{ duration: 0.3 }}
-            >
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
-                <div>
-                  <h2 className="text-lg sm:text-xl font-bold text-indigo-300 uppercase tracking-wider">
-                    Mapa de Correlatividades
-                  </h2>
-                  <p className="text-xs text-gray-500 mt-1">
-                    Hacé scroll/zoom para navegar el grafo
-                  </p>
-                </div>
-                <a
-                  href={`${import.meta.env.BASE_URL}plan_estudio_sistemas_franja_morada.pdf`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider bg-purple-900/40 hover:bg-purple-800 text-purple-200 hover:text-white border border-purple-500/50 hover:border-purple-500 shadow-md shadow-purple-950/40 transition-all hover:scale-[1.02] active:scale-[0.98]"
-                >
-                  <FileText size={14} />
-                  Plan de Estudio PDF (Franja Morada)
-                </a>
-              </div>
-              <div className="relative">
-                <MapaCorrelatividades materias={materias} />
-              </div>
-            </motion.div>
-          ) : vista === 'electivas' ? (
-            <VistaElectivas key="electivas" />
-          ) : (
-            <motion.div
-              key="mi-plan"
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -20 }}
-              transition={{ duration: 0.3 }}
-            >
-              <MiPlanView />
-            </motion.div>
+          <AnimatePresence mode="wait">
+            {renderVistaContent()}
+          </AnimatePresence>
+
+          <Footer />
+        </main>
+
+        <AnimatePresence>
+          {materiaModal && (
+            <MateriaModal
+              materia={materiaModal}
+              estadosDisponibles={getEstadosDisponibles(materiaModal.id)}
+              onClose={() => setMateriaSeleccionada(null)}
+              onEditar={handleEditar}
+            />
           )}
         </AnimatePresence>
 
-        {/* Footer */}
-        <footer className="text-center py-4 text-xs text-gray-600 border-t border-gray-800/50">
-          UTN FRBA · Ingeniería en Sistemas de Información ·{' '}
-          <span className="text-indigo-600">Planificador Personal</span>
-        </footer>
-      </main>
-
-      {/* Modals */}
-      <AnimatePresence>
-        {materiaModal && (
-          <MateriaModal
-            materia={materiaModal}
-            estadosDisponibles={getEstadosDisponibles(materiaModal.id)}
-            onClose={() => setMateriaSeleccionada(null)}
-            onEditar={handleEditar}
-          />
-        )}
-      </AnimatePresence>
-
-      <AnimatePresence>
-        {materiaEditar && (
-          <EditarMateriaModal
-            materia={materiaEditar}
-            onClose={() => setMateriaEditar(null)}
-          />
-        )}
-      </AnimatePresence>
+        <AnimatePresence>
+          {materiaEditar && (
+            <EditarMateriaModal
+              materia={materiaEditar}
+              onClose={() => setMateriaEditar(null)}
+            />
+          )}
+        </AnimatePresence>
+      </div>
     </div>
   );
 }

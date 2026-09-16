@@ -2,18 +2,150 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ── Base Styles ─────────────────────────────────────────────── */
-*, *::before, *::after {
-  box-sizing: border-box;
-}
+@layer base {
+  /* LIGHT MODE (Default) */
+  :root {
+    /* Backgrounds */
+    --color-bg-main: #F4F5F7;
+    --color-bg-secondary: #F0F2F5;
 
-html {
-  scroll-behavior: smooth;
-}
+    /* Surfaces */
+    --color-surface-main: #FFFFFF;
+    --color-surface-elevated: #FFFFFF;
+    --color-surface-hover: #E8EBEF;
+    --color-surface-active: #D9DEE5;
 
-body {
-  @apply bg-gray-950 text-white antialiased;
-  font-family: 'Inter', system-ui, sans-serif;
+    /* Borders */
+    --color-border-main: #D9DEE5;
+    --color-border-sutil: #E5E8EC;
+
+    /* Text */
+    --color-text-primary: #17191C;
+    --color-text-secondary: #59616D;
+    --color-text-muted: #7A838F;
+
+    /* Brand */
+    --color-brand-utn: #A71924;
+    --color-brand-hover: #8F151F;
+    --color-brand-soft: #FDE8EA;
+
+    /* Semantic Status - Accents (For progress bars and highlights) */
+    --color-status-locked: #64748B;
+    --color-status-not-started: #94A3B8;
+    --color-status-current: #3B82F6;
+    --color-status-regularized: #F59E0B;
+    --color-status-approved: #22C55E;
+    --color-status-promoted: #8B5CF6;
+
+    /* Badges (Light Mode) */
+    --color-badge-locked-bg: rgba(100,116,139,0.08);
+    --color-badge-locked-border: rgba(100,116,139,0.20);
+    --color-badge-locked-text: #475569;
+
+    --color-badge-not-started-bg: rgba(148,163,184,0.08);
+    --color-badge-not-started-border: rgba(148,163,184,0.20);
+    --color-badge-not-started-text: #64748B;
+
+    --color-badge-current-bg: rgba(59,130,246,0.08);
+    --color-badge-current-border: rgba(59,130,246,0.20);
+    --color-badge-current-text: #2563EB;
+
+    --color-badge-regularized-bg: rgba(245,158,11,0.08);
+    --color-badge-regularized-border: rgba(245,158,11,0.20);
+    --color-badge-regularized-text: #D97706;
+
+    --color-badge-approved-bg: rgba(34,197,94,0.08);
+    --color-badge-approved-border: rgba(34,197,94,0.20);
+    --color-badge-approved-text: #16A34A;
+
+    --color-badge-promoted-bg: rgba(139,92,246,0.08);
+    --color-badge-promoted-border: rgba(139,92,246,0.20);
+    --color-badge-promoted-text: #7C3AED;
+  }
+
+  /* DARK MODE */
+.dark {
+    /* ==========================================================
+       🧊 PALETA GLASSMORPHISM (Efecto Cristal - Dark Mode)
+       ========================================================== */
+       
+    /* 1. BACKGROUNDS (Fondo Base) */
+    --color-bg-main: #060913; 
+    --color-bg-secondary: #0B101E;
+
+    /* 2. SUPERFICIES (Tarjetas, Paneles, Navbar) */
+    --color-surface-main: #0B101E; 
+    --color-surface-elevated: #0f1523; 
+    --color-surface-hover: #334155;    /* slate-700 */
+    --color-surface-active: #475569;   /* slate-600 */
+
+    /* 3. BORDES */
+    --color-border-main: #334155; /* slate-700 */
+    --color-border-sutil: #1e293b; /* slate-800 */
+
+    /* 4. TEXTOS (Alto contraste) */
+    --color-text-primary: #f8fafc; /* slate-50 */
+    --color-text-secondary: #94a3b8; /* slate-400 */
+    --color-text-muted: #64748b; /* slate-500 */
+
+    /* 5. ACENTO DE MARCA (Bordó/Rojo) */
+    --color-brand-utn: #E5484D;
+    --color-brand-hover: #C9393E;
+    --color-brand-soft: rgba(229, 72, 77, 0.15);
+
+    /* 6. COLORES DE ESTADOS */
+    --color-status-locked: #475569; 
+    --color-status-not-started: #94a3b8; 
+    --color-status-current: #3b82f6; /* blue-500 */
+    --color-status-regularized: #f59e0b; /* amber-500 */
+    --color-status-approved: #10b981; /* emerald-500 */
+    --color-status-promoted: #8b5cf6; /* violet-500 */
+
+    /* 7. PASTILLAS (Badges) */
+    --color-badge-locked-bg: rgba(71, 85, 105, 0.15);
+    --color-badge-locked-border: rgba(71, 85, 105, 0.3);
+    --color-badge-locked-text: #94a3b8;
+
+    --color-badge-not-started-bg: rgba(148, 163, 184, 0.15);
+    --color-badge-not-started-border: rgba(148, 163, 184, 0.3);
+    --color-badge-not-started-text: #cbd5e1;
+
+    --color-badge-current-bg: rgba(59, 130, 246, 0.15);
+    --color-badge-current-border: rgba(59, 130, 246, 0.3);
+    --color-badge-current-text: #60a5fa;
+
+    --color-badge-regularized-bg: rgba(251, 191, 36, 0.15);
+    --color-badge-regularized-border: rgba(251, 191, 36, 0.3);
+    --color-badge-regularized-text: #FBBF24;
+
+    --color-badge-approved-bg: rgba(52, 211, 153, 0.15);
+    --color-badge-approved-border: rgba(52, 211, 153, 0.3);
+    --color-badge-approved-text: #34D399;
+
+    --color-badge-promoted-bg: rgba(129, 140, 248, 0.15);
+    --color-badge-promoted-border: rgba(129, 140, 248, 0.3);
+    --color-badge-promoted-text: #818CF8;
+  }
+
+@layer base {
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+  
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-slate-50 text-slate-900 dark:bg-[#09090b] dark:text-slate-50;
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+
+  /* Focus visible styles */
+  :focus-visible {
+    @apply outline-2 outline-offset-2;
+    outline-color: var(--color-brand-utn);
+  }
 }
 
 /* ── Custom Scrollbar ─────────────────────────────────────────── */
@@ -22,69 +154,31 @@ body {
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  @apply bg-gray-900;
+  background-color: var(--color-bg-main);
 }
 ::-webkit-scrollbar-thumb {
-  @apply bg-gray-700 rounded-full;
+  background-color: var(--color-border-main);
+  border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  @apply bg-gray-600;
+  background-color: var(--color-text-muted);
 }
 
-/* ── React Flow overrides ─────────────────────────────────────── */
+/* ── React Flow overrides (Necesarios para el mapa) ────────────── */
 .react-flow__background {
-  background-color: #030712 !important;
+  background-color: transparent !important;
 }
-.react-flow__controls {
-  background: #111827 !important;
-  border-color: #374151 !important;
+.react-flow__controls, .react-flow__minimap {
+  background: var(--color-surface-main) !important;
+  border-color: var(--color-border-main) !important;
   border-radius: 12px !important;
-  overflow: hidden;
 }
 .react-flow__controls-button {
-  background: #111827 !important;
-  border-color: #374151 !important;
-  color: #9CA3AF !important;
+  background: transparent !important;
+  border-color: var(--color-border-main) !important;
+  color: var(--color-text-muted) !important;
 }
 .react-flow__controls-button:hover {
-  background: #1F2937 !important;
-  color: white !important;
+  color: var(--color-text-primary) !important;
 }
-.react-flow__minimap {
-  background: #111827 !important;
-  border-color: #374151 !important;
-  border-radius: 12px !important;
-}
-
-/* ── Animations ───────────────────────────────────────────────── */
-@keyframes shimmer {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
-}
-
-@keyframes glow-pulse {
-  0%, 100% { opacity: 0.6; }
-  50% { opacity: 1; }
-}
-
-.glow-pulse {
-  animation: glow-pulse 2s ease-in-out infinite;
-}
-
-/* ── Glass Effect ─────────────────────────────────────────────── */
-.glass {
-  background: rgba(255, 255, 255, 0.03);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-}
-
-/* ── Focus visible styles ─────────────────────────────────────── */
-:focus-visible {
-  @apply outline-2 outline-indigo-500 outline-offset-2;
-}
-
-/* ── Smooth transitions for state changes ─────────────────────── */
-.materia-card {
-  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.3s ease;
 }

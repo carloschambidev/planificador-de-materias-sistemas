@@ -11,64 +11,86 @@ export default {
         sans: ['Inter', 'system-ui', 'sans-serif'],
         mono: ['JetBrains Mono', 'monospace'],
       },
-      colors: {
-        // Estado colors
-        bloqueada: {
-          DEFAULT: '#374151',
-          light: '#4B5563',
-          text: '#9CA3AF',
-        },
-        'no-iniciada': {
-          DEFAULT: '#1F2937',
-          light: '#374151',
-          text: '#6B7280',
-        },
-        cursando: {
-          DEFAULT: '#1D4ED8',
-          light: '#2563EB',
-          glow: '#3B82F6',
-          text: '#93C5FD',
-        },
-        regularizada: {
-          DEFAULT: '#B45309',
-          light: '#D97706',
-          glow: '#F59E0B',
-          text: '#FCD34D',
-        },
-        'debe-final': {
-          DEFAULT: '#C2410C',
-          light: '#EA580C',
-          glow: '#F97316',
-          text: '#FDBA74',
-        },
-        aprobada: {
-          DEFAULT: '#15803D',
-          light: '#16A34A',
-          glow: '#22C55E',
-          text: '#86EFAC',
-        },
-        promocionada: {
-          DEFAULT: '#047857',
-          light: '#059669',
-          glow: '#10B981',
-          text: '#6EE7B7',
-        },
-        // UI colors
+      backgroundColor: {
+        background: 'var(--color-bg-main)',
+        'bg-secondary': 'var(--color-bg-secondary)',
         surface: {
-          50: '#F8FAFC',
-          100: '#F1F5F9',
-          800: '#1E293B',
-          850: '#172033',
-          900: '#0F172A',
-          950: '#080D1A',
+          DEFAULT: 'var(--color-surface-main)',
+          elevated: 'var(--color-surface-elevated)',
+          hover: 'var(--color-surface-hover)',
+          active: 'var(--color-surface-active)',
         },
+        brand: {
+          DEFAULT: 'var(--color-brand-utn)',
+          hover: 'var(--color-brand-hover)',
+          soft: 'var(--color-brand-soft)',
+        },
+        status: {
+          locked: {
+            DEFAULT: 'var(--color-status-locked)',
+            soft: 'var(--color-badge-locked-bg)',
+          },
+          'not-started': {
+            DEFAULT: 'var(--color-status-not-started)',
+            soft: 'var(--color-badge-not-started-bg)',
+          },
+          current: {
+            DEFAULT: 'var(--color-status-current)',
+            soft: 'var(--color-badge-current-bg)',
+          },
+          regularized: {
+            DEFAULT: 'var(--color-status-regularized)',
+            soft: 'var(--color-badge-regularized-bg)',
+          },
+          approved: {
+            DEFAULT: 'var(--color-status-approved)',
+            soft: 'var(--color-badge-approved-bg)',
+          },
+          promoted: {
+            DEFAULT: 'var(--color-status-promoted)',
+            soft: 'var(--color-badge-promoted-bg)',
+          },
+        }
+      },
+      textColor: {
+        primary: 'var(--color-text-primary)',
+        secondary: 'var(--color-text-secondary)',
+        muted: 'var(--color-text-muted)',
+        brand: {
+          DEFAULT: 'var(--color-brand-utn)',
+          hover: 'var(--color-brand-hover)',
+        },
+        status: {
+          locked: 'var(--color-badge-locked-text)',
+          'not-started': 'var(--color-badge-not-started-text)',
+          current: 'var(--color-badge-current-text)',
+          regularized: 'var(--color-badge-regularized-text)',
+          approved: 'var(--color-badge-approved-text)',
+          promoted: 'var(--color-badge-promoted-text)',
+        }
+      },
+      borderColor: {
+        DEFAULT: 'var(--color-border-main)',
+        border: 'var(--color-border-main)',
+        sutil: 'var(--color-border-sutil)',
+        brand: 'var(--color-brand-utn)',
+        status: {
+          locked: 'var(--color-badge-locked-border)',
+          'not-started': 'var(--color-badge-not-started-border)',
+          current: 'var(--color-badge-current-border)',
+          regularized: 'var(--color-badge-regularized-border)',
+          approved: 'var(--color-badge-approved-border)',
+          promoted: 'var(--color-badge-promoted-border)',
+        }
       },
       boxShadow: {
-        'glow-blue': '0 0 20px rgba(59, 130, 246, 0.3)',
-        'glow-green': '0 0 20px rgba(34, 197, 94, 0.3)',
-        'glow-emerald': '0 0 20px rgba(16, 185, 129, 0.3)',
-        'glow-yellow': '0 0 20px rgba(245, 158, 11, 0.3)',
-        'glow-orange': '0 0 20px rgba(249, 115, 22, 0.3)',
+        'glow-blue': '0 0 20px rgba(59, 130, 246, 0.1)',
+        'glow-green': '0 0 20px rgba(34, 197, 94, 0.1)',
+        'glow-emerald': '0 0 20px rgba(16, 185, 129, 0.1)',
+        'glow-yellow': '0 0 20px rgba(245, 158, 11, 0.1)',
+        'glow-orange': '0 0 20px rgba(249, 115, 22, 0.1)',
+        'elevated': '0 8px 24px rgba(0, 0, 0, 0.18)',
+        'elevated-light': '0 4px 16px rgba(15, 23, 42, 0.05)',
       },
       animation: {
         'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
