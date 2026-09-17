@@ -5,7 +5,7 @@
 
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FileText, Trash2, LayoutDashboard, AlertTriangle } from 'lucide-react';
+import {Download, Trash2, AlertTriangle } from 'lucide-react';
 import { useCarreraStore } from "../../../core/store/useCarreraStore";
 import { usePlanificador } from "../../../features/mi-plan/hooks/usePlanificador";
 import { useCorrelatividades } from "../../../core/hooks/useCorrelatividades";
@@ -113,8 +113,8 @@ export function MiPlanView() {
       horasMaximas = getHorasCuatrimestre(anio, periodo, idMateria, idMateria);
     }
 
-    // Interceptar con el Modal si supera 16hs semanales
-    if (horasMaximas > 16) {
+    // Interceptar con el Modal si supera 26hs semanales
+    if (horasMaximas > 26) {
       setPendingDrop({
         idMateria,
         nombreMateria: materia.nombre,
@@ -144,22 +144,16 @@ export function MiPlanView() {
 
   return (
     <div className="flex flex-col gap-6 w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-4 relative">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 py-3 px-5 rounded-2xl border border bg-surface shadow-xl backdrop-blur-sm">
-        <div className="flex items-center gap-3.5">
-          <div className="p-3 rounded-2xl bg-background text-secondary border border shadow-inner">
-            <LayoutDashboard size={26} />
-          </div>
-          <div>
-            <h2 className="text-xl sm:text-2xl font-bold text-white tracking-tight">
-              Mi Plan · Personalizado
-            </h2>
-            <p className="text-xs sm:text-sm text-gray-300 mt-0.5">
-              Diseña tu trayectoria universitaria seleccionando tus materias y ubicándolas en cada año y cuatrimestre
-            </p>
-          </div>
+      <div className="flex flex-col md:flex-row items-center justify-between w-full mb-1 relative">
+        {/* Título Centrado (Absoluto en Desktop) */}
+        <div className="md:absolute md:left-1/2 md:-translate-x-1/2">
+          <h2 className="text-lg sm:text-xl font-bold text-primary uppercase tracking-wider text-center hidden md:block">
+            TU PROPIO PLAN
+          </h2>
         </div>
 
-        <div className="flex items-center gap-3 self-end sm:self-auto shrink-0">
+        {/* Botones de Acción */}
+        <div className="flex w-full items-center justify-between gap-3 md:w-auto mb-2 md:mb-0 mt-0 z-10 md:ml-auto md:justify-end">
           <button
             type="button"
             onClick={() => {
@@ -169,21 +163,22 @@ export function MiPlanView() {
               }
               exportarMiPlanPDF(planPersonalizado, totalAniosPlan, getMateriaCompleta);
             }}
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#4a0f0f] hover:bg-background text-white text-xs font-bold shadow-lg border border transition-all hover:scale-[1.02] active:scale-[0.98]"
+            className="flex-1 md:flex-none h-10 px-4 rounded-xl text-xs sm:text-sm font-semibold bg-white text-purple-600 border border-slate-200 hover:bg-purple-50 hover:border-purple-300 hover:text-purple-700 dark:bg-slate-900/50 dark:text-purple-400 dark:border-slate-700 dark:hover:bg-purple-500/10 dark:hover:border-purple-500 transition-all flex items-center justify-center gap-2 shadow-sm"
           >
-            <FileText size={16} />
-            Descargar Plan (PDF)
+            <Download size={16} className="text-purple-500 dark:text-purple-400 group-hover:scale-110 transition-transform" />
+            <span className="hidden sm:inline">Descargar Mi Plan</span>
+            <span className="sm:hidden">Mi Plan</span>
           </button>
 
           {planPersonalizado.length > 0 && (
             <button
               type="button"
               onClick={() => setShowClearModal(true)}
-              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-red-500/40 bg-red-950/30 hover:bg-red-900/40 text-red-300 hover:text-red-200 text-xs font-semibold transition-all"
+              className="flex-1 md:flex-none h-10 px-4 rounded-xl text-xs sm:text-sm font-semibold bg-white text-rose-600 border border-slate-200 hover:bg-rose-50 hover:border-rose-300 hover:text-rose-700 dark:bg-slate-900/50 dark:text-rose-400 dark:border-slate-700 dark:hover:bg-rose-500/10 dark:hover:border-rose-500 transition-all flex items-center justify-center gap-2 shadow-sm"
               title="Limpiar tablero"
             >
-              <Trash2 size={16} />
-              Limpiar Plan
+              <Trash2 size={16} className="text-rose-600 dark:text-rose-400" />
+              <span>Limpiar Plan</span>
             </button>
           )}
         </div>
@@ -214,37 +209,14 @@ export function MiPlanView() {
 
       {/* Banner Flotante / Sticky Inferior al Seleccionar una Materia */}
       {materiaSeleccionada && (
-        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 w-[92%] max-w-2xl bg-zinc-800/95 border border-zinc-700 rounded-2xl p-4 shadow-2xl shadow-black/50 backdrop-blur-xl flex flex-col sm:flex-row items-center justify-between gap-3 animate-in fade-in slide-in-from-bottom-4 duration-200">
-          <div className="flex items-center gap-3">
-            <div className="p-2.5 rounded-xl bg-status-current-soft text-status-current border border-status-current shrink-0">
-              <span className="flex h-3 w-3 relative">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-status-current opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-3 w-3 bg-status-current"></span>
-              </span>
-            </div>
-            <div>
-              <div className="flex items-center gap-2 flex-wrap">
-                <span className="text-xs font-mono font-bold px-2 py-0.5 rounded bg-surface-active text-secondary border border-sutil">
-                  {materiaSeleccionada.codigo}
-                </span>
-                <h4 className="text-sm font-bold text-primary">
-                  {materiaSeleccionada.nombre}
-                </h4>
-                <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-status-promoted-soft text-status-promoted border border-status-promoted">
-                  {materiaSeleccionada.estadoDinamico.duracionPersonalizada ?? materiaSeleccionada.duracion}
-                </span>
-              </div>
-              <p className="text-xs text-muted mt-0.5 font-medium">
-                👉 Elige la celda de Año / Cuatrimestre en la tabla para ubicarla (o pulsa Esc para cancelar)
-              </p>
-            </div>
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex items-center gap-4 py-3 px-5 rounded-full shadow-2xl shadow-blue-900/20 bg-blue-600 dark:bg-blue-600 text-white border border-blue-400 dark:border-blue-500 animate-in slide-in-from-bottom-5">
+          <div className="flex items-center gap-2">
+            <span className="font-mono font-bold text-[10px] px-1.5 py-0.5 rounded bg-blue-800 text-blue-100">{materiaSeleccionada.codigo}</span>
+            <span className="text-sm font-semibold">{materiaSeleccionada.nombre}</span>
           </div>
-          <button
-            type="button"
-            onClick={() => setMateriaSeleccionada(null)}
-            className="shrink-0 px-4 py-2 rounded-lg bg-red-500/20 hover:bg-red-500/40 text-red-400 border border-red-500/30 text-xs font-bold transition-colors"
-          >
-            Cancelar selección
+          <span className="hidden sm:inline text-xs text-blue-200">👉 Elige dónde ubicarla</span>
+          <button onClick={() => setMateriaSeleccionada(null)} className="ml-2 px-3 py-1.5 bg-rose-500 hover:bg-rose-600 text-white text-xs font-bold rounded-full transition-colors shadow-sm">
+            Cancelar
           </button>
         </div>
       )}

@@ -6,6 +6,7 @@ import { useCorrelatividades } from "../../../core/hooks/useCorrelatividades";
 import { useCarreraStore } from "../../../core/store/useCarreraStore";
 import { cuentaComoRegularizada, cuentaComoAprobada, type ElectivaDefinicion } from "../../../core/types";
 import { ElectivaDetailModal } from './ElectivaDetailModal';
+import { normalizeText } from "../../../core/utils/strings";
 
 interface CustomDropdownProps {
   value: string;
@@ -158,7 +159,7 @@ export function VistaElectivas() {
       exit={{ opacity: 0, y: -20 }}
       className="space-y-4 md:space-y-8 pb-4"
     >
-      <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-2 md:gap-4 mb-2">
+      <div className="w-full max-w-6xl mx-auto flex flex-col xl:flex-row xl:items-end justify-between gap-4 mb-6">
         <div className="hidden md:block">
           <h2 className="text-xl sm:text-2xl font-bold text-primary uppercase tracking-wider">
             Materias Electivas
@@ -186,7 +187,7 @@ export function VistaElectivas() {
               onChange={(val) => setFilterState(val as 'Todas' | 'Habilitadas')}
               options={[
                 { value: 'Todas', label: 'Todas' },
-                { value: 'Habilitadas', label: 'Solo Habilitadas' }
+                { value: 'Habilitadas', label: 'Habilitadas' }
               ]}
               placeholder="Estado"
             />
@@ -217,9 +218,9 @@ export function VistaElectivas() {
           const filteredMaterias = electivasActivas.filter(e => {
             if (e.area !== area) return false;
             if (searchQuery) {
-               const query = searchQuery.toLowerCase();
-               const matchesName = e.nombre.toLowerCase().includes(query);
-               const matchesCode = (e.codigo || '').includes(query);
+               const query = normalizeText(searchQuery);
+               const matchesName = normalizeText(e.nombre).includes(query);
+               const matchesCode = normalizeText(e.codigo || '').includes(query);
                if (!matchesName && !matchesCode) return false;
             }
             if (filterState === 'Habilitadas') {

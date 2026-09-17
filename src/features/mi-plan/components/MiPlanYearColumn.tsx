@@ -4,7 +4,7 @@
 // ============================================================
 
 import { useState } from 'react';
-import { Calendar, Plus, Clock } from 'lucide-react';
+import { Calendar, ChevronLeft, ChevronRight } from 'lucide-react';
 import { MiPlanDropZone } from "./MiPlanDropZone";
 import type { MateriaCompleta, PeriodoPlan, ItemPlanPersonalizado } from "../../../core/types";
 import { parsearHoras, type AlertaCorrelativa, type TermometroConfig } from "../../../features/mi-plan/hooks/usePlanificador";
@@ -20,6 +20,10 @@ interface Props {
   onSelectMateria: (materia: MateriaCompleta) => void;
   onAsignarMateria: (idMateria: string, anio: number, periodo: PeriodoPlan) => void;
   onRemoveMateria: (idMateria: string) => void;
+  onPrevYear?: () => void;
+  onNextYear?: () => void;
+  canGoPrev?: boolean;
+  canGoNext?: boolean;
 }
 
 export function MiPlanYearColumn({
@@ -33,23 +37,18 @@ export function MiPlanYearColumn({
   onSelectMateria,
   onAsignarMateria,
   onRemoveMateria,
+  onPrevYear,
+  onNextYear,
+  canGoPrev,
+  canGoNext,
 }: Props) {
-  const [visibleSemesters, setVisibleSemesters] = useState({ c1: true, c2: true });
+  const [collapsedPeriods, setCollapsedPeriods] = useState<Record<string, boolean>>({});
 
-  const handleHideSemester = (periodo: '1C' | '2C', cantidadMaterias: number) => {
-    if (cantidadMaterias > 0) {
-      alert(`No puedes ocultar el cuatrimestre porque tiene ${cantidadMaterias} materias asignadas. Quítalas primero.`);
-      return;
-    }
-    setVisibleSemesters(prev => ({ ...prev, [periodo === '1C' ? 'c1' : 'c2']: false }));
-  };
-
-  const handleRestoreSemester = () => {
-    if (!visibleSemesters.c1) {
-      setVisibleSemesters(prev => ({ ...prev, c1: true }));
-    } else if (!visibleSemesters.c2) {
-      setVisibleSemesters(prev => ({ ...prev, c2: true }));
-    }
+  const togglePeriod = (periodId: string) => {
+    setCollapsedPeriods(prev => ({
+      ...prev,
+      [periodId]: !prev[periodId]
+    }));
   };
 
   // Obtener las materias asignadas a este año para cada uno de los 3 períodos
@@ -69,43 +68,70 @@ export function MiPlanYearColumn({
   const horas2C = getHorasCuatrimestre(anio, '2C');
   const termometro1C = getNivelTermometro(horas1C);
   const termometro2C = getNivelTermometro(horas2C);
+  const horasAnuales = materiasAnuales.reduce((acc, m) => acc + parsearHoras(m.horas), 0);
+  const horasSolo1C = materias1C.reduce((acc, m) => acc + parsearHoras(m.horas), 0);
+  const horasSolo2C = materias2C.reduce((acc, m) => acc + parsearHoras(m.horas), 0);
+  
+  const carga1C = horasAnuales + horasSolo1C;
+  const carga2C = horasAnuales + horasSolo2C;
+  const totalHorasSemanales = Math.max(carga1C, carga2C);
 
-  const materiasTotalAnio =
-    materiasAnuales.length + materias1C.length + materias2C.length;
+  const ANIO_THEME = {
+    1: { topBar: 'bg-sky-500 dark:bg-sky-400', iconColor: 'text-sky-400' },
+    2: { topBar: 'bg-emerald-500 dark:bg-emerald-400', iconColor: 'text-emerald-400' },
+    3: { topBar: 'bg-amber-500 dark:bg-amber-400', iconColor: 'text-amber-400' },
+    4: { topBar: 'bg-purple-500 dark:bg-purple-400', iconColor: 'text-purple-400' },
+    5: { topBar: 'bg-rose-500 dark:bg-rose-400', iconColor: 'text-rose-400' },
+  } as Record<number, {topBar: string, iconColor: string}>;
+  
+  const defaultTheme = { topBar: 'bg-slate-500 dark:bg-slate-400', iconColor: 'text-slate-400' };
+  const theme = ANIO_THEME[anio] || defaultTheme;
 
-  const horasTotalesAnio =
-    materiasAnuales.reduce((acc, m) => acc + parsearHoras(m.horas), 0) +
-    materias1C.reduce((acc, m) => acc + parsearHoras(m.horas), 0) +
-    materias2C.reduce((acc, m) => acc + parsearHoras(m.horas), 0);
-    
-  const termometroAnual = getNivelTermometro(horasTotalesAnio);
+  let semaforoStyle = 'bg-slate-100 text-slate-600 border-slate-300 dark:bg-slate-800/60 dark:text-slate-400 dark:border-slate-700';
+  if (totalHorasSemanales > 0 && totalHorasSemanales <= 25) {
+    semaforoStyle = 'bg-emerald-100 text-emerald-800 border-emerald-300 dark:bg-emerald-500/20 dark:text-emerald-400 dark:border-emerald-500/30';
+  } else if (totalHorasSemanales >= 26 && totalHorasSemanales <= 35) {
+    semaforoStyle = 'bg-amber-100 text-amber-800 border-amber-300 dark:bg-amber-500/20 dark:text-amber-400 dark:border-amber-500/30';
+  } else if (totalHorasSemanales >= 36) {
+    semaforoStyle = 'bg-rose-100 text-rose-800 border-rose-300 dark:bg-rose-500/20 dark:text-rose-400 dark:border-rose-500/30';
+  }
+
+  const semaforoText = totalHorasSemanales === 0 ? '0 hs/sem' : `${totalHorasSemanales} hs/sem`;
 
   return (
-    <div className="w-full rounded-2xl border border bg-surface p-4 flex flex-col gap-4 transition-all">
+    <div className="relative overflow-hidden w-full shrink-0 lg:w-auto rounded-2xl bg-slate-50 dark:bg-slate-900/40 border border-slate-200 dark:border-slate-800/80 p-3.5 backdrop-blur-md flex flex-col gap-3 shadow-lg">
+      <div className={`absolute top-0 left-0 right-0 h-[2px] ${theme.topBar}`} />
       {/* Cabecera de la Columna del Año */}
-      <div className="flex items-center justify-between pb-3 border-b border">
-        <div className="flex items-center gap-2.5">
-          <div className="p-2 rounded-xl bg-background text-secondary border border">
-            <Calendar size={18} />
+      <div className="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-slate-800/70">
+        {/* Flecha Izquierda (Solo Móvil) */}
+        <button 
+          onClick={onPrevYear} 
+          disabled={!canGoPrev}
+          className={`p-1 lg:hidden transition-colors ${canGoPrev ? 'text-slate-400 hover:text-slate-800 dark:hover:text-white' : 'text-slate-300 dark:text-slate-700 cursor-not-allowed'}`}
+        >
+          <ChevronLeft size={20} />
+        </button>
+
+        {/* Título y Semáforo Centrados */}
+        <div className="flex flex-col items-center justify-center flex-1">
+          <div className="flex items-center gap-1.5">
+            <Calendar className={theme.iconColor} size={16} />
+            <h3 className="text-sm font-bold text-slate-900 dark:text-white">Año {anio}</h3>
           </div>
-          <div>
-            <h3 className="text-sm font-bold text-primary tracking-tight flex items-center gap-2">
-              Año Académico {anio}
-              {horasTotalesAnio > 0 && (
-                <span
-                  className={`inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full border ${termometroAnual.bg} ${termometroAnual.border} ${termometroAnual.text}`}
-                  title="Carga horaria anual total"
-                >
-                  <Clock size={11} />
-                  {termometroAnual.label}
-                </span>
-              )}
-            </h3>
-            <p className="text-xs text-secondary/60 font-medium">
-              {materiasTotalAnio} {materiasTotalAnio === 1 ? 'materia' : 'materias'}
-            </p>
-          </div>
+          {/* Semáforo de Horas debajo del título */}
+          <span className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded-md border mt-1.5 ${semaforoStyle}`}>
+            {semaforoText}
+          </span>
         </div>
+
+        {/* Flecha Derecha (Solo Móvil) */}
+        <button 
+          onClick={onNextYear} 
+          disabled={!canGoNext}
+          className={`p-1 lg:hidden transition-colors ${canGoNext ? 'text-slate-400 hover:text-slate-800 dark:hover:text-white' : 'text-slate-300 dark:text-slate-700 cursor-not-allowed'}`}
+        >
+          <ChevronRight size={20} />
+        </button>
       </div>
 
       {/* Las 3 Zonas de Asignación por Período: Anual, 1C y 2C */}
@@ -120,49 +146,37 @@ export function MiPlanYearColumn({
           onSelectMateria={onSelectMateria}
           onAsignarMateria={onAsignarMateria}
           onRemoveMateria={onRemoveMateria}
+          isCollapsed={collapsedPeriods['Anual'] || false}
+          onToggle={() => togglePeriod('Anual')}
         />
 
-        {visibleSemesters.c1 && (
-          <MiPlanDropZone
-            anio={anio}
-            periodo="1C"
-            items={materias1C}
-            termometro={termometro1C}
-            materiaSeleccionada={materiaSeleccionada}
-            getAlertaCorrelativas={getAlertaCorrelativas}
-            onSelectMateria={onSelectMateria}
-            onAsignarMateria={onAsignarMateria}
-            onRemoveMateria={onRemoveMateria}
-            onHide={() => handleHideSemester('1C', materias1C.length)}
-          />
-        )}
+        <MiPlanDropZone
+          anio={anio}
+          periodo="1C"
+          items={materias1C}
+          termometro={termometro1C}
+          materiaSeleccionada={materiaSeleccionada}
+          getAlertaCorrelativas={getAlertaCorrelativas}
+          onSelectMateria={onSelectMateria}
+          onAsignarMateria={onAsignarMateria}
+          onRemoveMateria={onRemoveMateria}
+          isCollapsed={collapsedPeriods['1C'] || false}
+          onToggle={() => togglePeriod('1C')}
+        />
 
-        {visibleSemesters.c2 && (
-          <MiPlanDropZone
-            anio={anio}
-            periodo="2C"
-            items={materias2C}
-            termometro={termometro2C}
-            materiaSeleccionada={materiaSeleccionada}
-            getAlertaCorrelativas={getAlertaCorrelativas}
-            onSelectMateria={onSelectMateria}
-            onAsignarMateria={onAsignarMateria}
-            onRemoveMateria={onRemoveMateria}
-            onHide={() => handleHideSemester('2C', materias2C.length)}
-          />
-        )}
-
-        {(!visibleSemesters.c1 || !visibleSemesters.c2) && (
-          <div className="flex justify-center mt-1 pb-1">
-            <button
-              onClick={handleRestoreSemester}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border bg-background text-[11px] font-medium text-secondary/70 hover:bg-surface-hover hover:text-primary transition-colors"
-            >
-              <Plus size={13} />
-              Añadir {(!visibleSemesters.c1 && !visibleSemesters.c2) ? 'Cuatrimestre' : (!visibleSemesters.c1 ? '1º Cuatrimestre' : '2º Cuatrimestre')}
-            </button>
-          </div>
-        )}
+        <MiPlanDropZone
+          anio={anio}
+          periodo="2C"
+          items={materias2C}
+          termometro={termometro2C}
+          materiaSeleccionada={materiaSeleccionada}
+          getAlertaCorrelativas={getAlertaCorrelativas}
+          onSelectMateria={onSelectMateria}
+          onAsignarMateria={onAsignarMateria}
+          onRemoveMateria={onRemoveMateria}
+          isCollapsed={collapsedPeriods['2C'] || false}
+          onToggle={() => togglePeriod('2C')}
+        />
       </div>
     </div>
   );

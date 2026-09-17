@@ -6,7 +6,7 @@
 
 import { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Lock, Clock, BookOpen, Star, Check, Diamond, CircleDot, Circle, ChevronDown, Download, ChevronLeft, ChevronRight } from 'lucide-react';
+import { X, Lock, Clock, BookOpen, Star, Check, Diamond, CircleDot, Circle, ChevronDown, Download, ChevronLeft, ChevronRight, Info } from 'lucide-react';
 import type { MateriaCompleta } from "../../../core/types";
 import { ESTADO_CONFIG, BLOQUEADA_CONFIG, NIVELES_NOMBRES } from "../../../core/types";
 import { getMateriaById } from "../../../core/data/materias";
@@ -68,7 +68,7 @@ function MiniCard({ materia, onClick }: { materia: MateriaCompleta; onClick: () 
       className={`w-full flex items-center justify-between h-7 md:h-10 px-2 md:px-3 rounded-md bg-slate-50/80 hover:bg-slate-100/90 dark:bg-slate-900/60 dark:hover:bg-slate-800/80 border border-slate-200/70 dark:border-white/5 transition-all cursor-pointer min-w-0 group relative ${materia.estaBloqueada ? 'opacity-60 cursor-not-allowed' : ''}`}
     >
       <div className="flex items-center gap-1.5 md:gap-2.5 min-w-0 flex-1 pr-1.5">
-        <span className="shrink-0 text-[8px] md:text-[10px] font-bold px-1 md:px-2 py-0.5 rounded bg-slate-800 text-white dark:bg-slate-200 dark:text-slate-900 uppercase tracking-wider leading-none shadow-sm">
+        <span className="font-mono font-black text-[10px] px-1.5 py-0.5 rounded bg-slate-600 text-white dark:bg-slate-700/80 dark:text-slate-100 shrink-0">
           {codigoMostrar}
         </span>
         <span className="text-[10.5px] md:text-[13px] font-medium md:font-semibold text-slate-700 group-hover:text-slate-900 dark:text-slate-300 dark:group-hover:text-white truncate">
@@ -163,82 +163,56 @@ function DetalleModal({ materia, onClose }: { materia: MateriaCompleta; onClose:
           {/* Body */}
           <div className="px-5 pb-5">
             <div className={`${muchosRequisitos ? 'grid grid-cols-1 md:grid-cols-2 gap-4' : 'space-y-3'}`}>
-              {/* Bloqueo */}
-              {materia.estaBloqueada && materia.motivoBloqueo.length > 0 && (
-                <div className="p-3.5 rounded-xl bg-status-locked-soft border border-status-locked">
-                  <div className="flex items-center gap-2 mb-2">
-                    <Lock size={13} className="text-status-locked" />
-                    <span className="text-xs font-semibold text-status-locked">Requisitos pendientes ({materia.motivoBloqueo.length})</span>
+              {/* Correlativas para Cursar */}
+              {(materia.regularizadasRequeridas.length > 0 || materia.aprobadasRequeridas.length > 0) && (
+                <div className="bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700/50 rounded-xl p-4 flex flex-col gap-3">
+                  <h4 className="text-sm font-bold text-slate-700 dark:text-slate-200 flex items-center gap-2">
+                    <Lock size={16} className="text-rose-500 dark:text-rose-400" /> 
+                    Para habilitar la cursada necesitas:
+                  </h4>
+                  <div className="flex flex-col gap-2 mt-1">
+                    {materia.regularizadasRequeridas.map(id => {
+                      const materiaRequerida = getMateriaById(id);
+                      return (
+                        <div key={`reg-${id}`} className="flex items-center justify-between py-2 px-3 rounded-lg bg-white dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/50 shadow-sm dark:shadow-none">
+                          <span className="text-sm font-medium text-slate-700 dark:text-slate-300">{materiaRequerida?.nombre ?? id}</span>
+                          <span className="text-[10px] font-bold px-2 py-1 rounded-md uppercase tracking-wider bg-amber-100 text-amber-700 border border-amber-200 dark:bg-amber-500/10 dark:text-amber-400 dark:border-amber-500/20">
+                            Regularizada
+                          </span>
+                        </div>
+                      );
+                    })}
+                    {materia.aprobadasRequeridas.map(id => {
+                      const materiaRequerida = getMateriaById(id);
+                      return (
+                        <div key={`apr-${id}`} className="flex items-center justify-between py-2 px-3 rounded-lg bg-white dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/50 shadow-sm dark:shadow-none">
+                          <span className="text-sm font-medium text-slate-700 dark:text-slate-300">{materiaRequerida?.nombre ?? id}</span>
+                          <span className="text-[10px] font-bold px-2 py-1 rounded-md uppercase tracking-wider bg-emerald-100 text-emerald-700 border border-emerald-200 dark:bg-emerald-500/10 dark:text-emerald-400 dark:border-emerald-500/20">
+                            Aprobada
+                          </span>
+                        </div>
+                      );
+                    })}
                   </div>
-                  <ul className={`grid gap-x-3 gap-y-1 ${muchosRequisitos ? 'grid-cols-1 sm:grid-cols-2 text-[11px]' : 'grid-cols-1 text-xs'}`}>
-                    {materia.motivoBloqueo.map((m, i) => (
-                      <li key={i} className="text-muted flex items-start gap-1 leading-tight">
-                        <span className="mt-0.5 shrink-0">·</span><span>{m}</span>
-                      </li>
-                    ))}
-                  </ul>
                 </div>
               )}
 
-              {/* Descripción */}
-              {materia.descripcion && (
-                <div className="p-3 rounded-xl bg-bg-secondary border border-border">
-                  <p className="text-[10px] font-semibold uppercase tracking-wide text-secondary mb-1">
-                    Información de Acreditación
-                  </p>
-                  <p className="text-xs leading-relaxed text-primary">
-                    {materia.descripcion}
-                  </p>
-                </div>
-              )}
-
-              {/* Correlatividades y Requisitos */}
+              {/* Banner Unificado de Información */}
               {(materia.regularizadasRequeridas.length > 0 || materia.aprobadasRequeridas.length > 0 || materia.requisitoAdicional) && (
-                <div className="space-y-3">
-                  {materia.requisitoAdicional && (
-                    <div className="p-3 rounded-xl bg-status-promoted-soft border border-status-promoted">
-                      <p className="text-[10px] font-bold uppercase tracking-wide text-status-promoted mb-1 flex items-center gap-1">
-                        <span>★</span> Para Aprobar (Examen Final):
+                <div className="mt-1 flex items-start gap-3 p-3.5 rounded-xl bg-blue-50 border border-blue-200 dark:bg-blue-950/30 dark:border-blue-900/50">
+                  <Info size={18} className="text-blue-500 dark:text-blue-400 shrink-0 mt-0.5" />
+                  <div className="flex flex-col gap-1.5 text-xs text-blue-800 dark:text-blue-200/80 leading-relaxed">
+                    {(materia.regularizadasRequeridas.length > 0 || materia.aprobadasRequeridas.length > 0) && (
+                      <p>
+                        <strong className="text-blue-900 dark:text-blue-300">Para cursar:</strong> Debes cumplir con todas las correlativas listadas arriba.
                       </p>
-                      <p className="text-xs font-semibold leading-relaxed text-primary">
-                        {materia.requisitoAdicional}
+                    )}
+                    {materia.requisitoAdicional && (
+                      <p>
+                        <strong className="text-blue-900 dark:text-blue-300">Para aprobar la materia:</strong> {materia.requisitoAdicional}
                       </p>
-                    </div>
-                  )}
-                  {materia.regularizadasRequeridas.length > 0 && (
-                    <div>
-                      <p className="text-[10px] font-semibold uppercase tracking-wide text-secondary mb-1">
-                        Regularizadas requeridas ({materia.regularizadasRequeridas.length})
-                      </p>
-                      <div className="flex flex-wrap gap-1">
-                        {materia.regularizadasRequeridas.map(id => {
-                          const def = getMateriaById(id);
-                          return (
-                            <span key={id} className="text-[10px] px-2 py-0.5 rounded-full bg-amber-100 border border-amber-300 text-amber-700">
-                              {def?.nombre ?? id}
-                            </span>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  )}
-                  {materia.aprobadasRequeridas.length > 0 && (
-                    <div>
-                      <p className="text-[10px] font-semibold uppercase tracking-wide text-gray-400 mb-1">
-                        Aprobadas requeridas ({materia.aprobadasRequeridas.length})
-                      </p>
-                      <div className="flex flex-wrap gap-1">
-                        {materia.aprobadasRequeridas.map(id => {
-                          const def = getMateriaById(id);
-                          return (
-                            <span key={id} className="text-[10px] px-2 py-0.5 rounded-full bg-green-100 border border-green-300 text-green-700">
-                              {def?.nombre ?? id}
-                            </span>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  )}
+                    )}
+                  </div>
                 </div>
               )}
             </div>
@@ -300,7 +274,7 @@ function StatsBar({ materias }: { materias: MateriaCompleta[] }) {
   return (
     <div className="bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800/80 rounded-xl p-3 mb-6 flex flex-col shadow-sm">
       {/* Fila Superior */}
-      <div className="flex flex-row items-center justify-between gap-4 w-full">
+      <div className="flex flex-col xl:flex-row items-center justify-between gap-4 w-full">
         
         {/* Mobile: Botón Contadores */}
         <button 
@@ -312,7 +286,7 @@ function StatsBar({ materias }: { materias: MateriaCompleta[] }) {
         </button>
 
         {/* Desktop: Contadores Inline */}
-        <div className="hidden md:flex flex-wrap items-center gap-4 text-sm">
+        <div className="hidden md:flex flex-wrap items-center gap-4 text-sm shrink-0">
           <div className="flex flex-col">
             <span className="text-[10px] text-slate-500 dark:text-slate-400 font-semibold uppercase tracking-wider">Total</span>
             <span className="font-bold text-slate-800 dark:text-slate-200 leading-none mt-0.5">{total}</span>
@@ -345,7 +319,7 @@ function StatsBar({ materias }: { materias: MateriaCompleta[] }) {
         </div>
 
         {/* Desktop: Leyenda */}
-        <div className="hidden md:flex items-center md:border-l md:pl-4 border-slate-200 dark:border-slate-700/50">
+        <div className="hidden xl:flex items-center xl:ml-auto xl:mr-6 shrink-0">
           <div className="flex flex-wrap items-center gap-4 text-xs text-slate-500 dark:text-slate-400">
             <LeyendaContent />
           </div>
@@ -356,11 +330,11 @@ function StatsBar({ materias }: { materias: MateriaCompleta[] }) {
           href={`${import.meta.env.BASE_URL}plan-estudio-oficial.pdf`}
           target="_blank"
           rel="noopener noreferrer"
-          className="ml-auto group flex items-center gap-2 px-3 py-1.5 md:px-3.5 md:py-2 rounded-xl text-xs font-semibold tracking-wide bg-white hover:bg-purple-50/50 border border-slate-200 hover:border-purple-300 text-slate-700 hover:text-purple-700 dark:bg-slate-900/60 dark:hover:bg-purple-950/30 dark:border-slate-800 dark:hover:border-purple-500/40 dark:text-slate-200 dark:hover:text-purple-300 shadow-sm hover:shadow-[0_0_15px_rgba(168,85,247,0.15)] transition-all duration-200 backdrop-blur-md cursor-pointer shrink-0"
+          className="group flex items-center gap-2 px-3 py-1.5 md:px-3.5 md:py-2 rounded-xl text-xs font-semibold tracking-wide bg-white hover:bg-purple-50/50 border border-slate-200 hover:border-purple-300 text-slate-700 hover:text-purple-700 dark:bg-slate-900/60 dark:hover:bg-purple-950/30 dark:border-slate-800 dark:hover:border-purple-500/40 dark:text-slate-200 dark:hover:text-purple-300 shadow-sm hover:shadow-[0_0_15px_rgba(168,85,247,0.15)] transition-all duration-200 backdrop-blur-md cursor-pointer shrink-0 md:ml-auto xl:ml-0"
         >
           <Download size={16} className="text-purple-500 dark:text-purple-400 group-hover:scale-110 transition-transform" />
-          <span className="hidden sm:inline">Descargar Plan PDF</span>
-          <span className="sm:hidden">Plan PDF</span>
+          <span className="hidden sm:inline">Descargar Plan de Estudio 2023</span>
+          <span className="sm:hidden">Plan 2023</span>
         </a>
       </div>
 
@@ -424,14 +398,14 @@ export function MapaCorrelatividades({ materias }: Props) {
     porNivel.get(m.nivel)!.push(m);
   }
 
-  const getBorderColor = (nivel: number) => {
+  const getTopBarColor = (nivel: number) => {
     switch (nivel) {
-      case 1: return 'border-t-2 border-t-blue-500';
-      case 2: return 'border-t-2 border-t-emerald-400';
-      case 3: return 'border-t-2 border-t-amber-400';
-      case 4: return 'border-t-2 border-t-fuchsia-500';
-      case 5: return 'border-t-2 border-t-rose-500';
-      default: return 'border-t-2 border-t-slate-500';
+      case 1: return 'bg-blue-500';
+      case 2: return 'bg-emerald-400';
+      case 3: return 'bg-amber-400';
+      case 4: return 'bg-fuchsia-500';
+      case 5: return 'bg-rose-500';
+      default: return 'bg-slate-500';
     }
   };
 
@@ -472,7 +446,8 @@ export function MapaCorrelatividades({ materias }: Props) {
             const porcentaje = cols.length > 0 ? (aprobadas / cols.length) * 100 : 0;
 
             return (
-              <div key={nivel} className={`w-[78vw] max-w-[285px] shrink-0 snap-center md:w-auto md:max-w-none md:shrink flex flex-col bg-white/90 dark:bg-slate-900/40 border border-slate-200/90 dark:border-slate-800/80 rounded-2xl p-2.5 md:p-3.5 gap-2 backdrop-blur-md shadow-sm shadow-slate-200/50 dark:shadow-none transition-colors ${getBorderColor(nivel)}`}>
+              <div key={nivel} className="relative overflow-hidden w-[78vw] max-w-[285px] shrink-0 snap-center md:w-auto md:max-w-none md:shrink flex flex-col bg-white/90 dark:bg-slate-900/40 border border-slate-200/90 dark:border-slate-800/80 rounded-2xl p-2.5 md:p-3.5 gap-2 backdrop-blur-md shadow-sm shadow-slate-200/50 dark:shadow-none transition-colors">
+                <div className={`absolute top-0 left-0 right-0 h-[2px] ${getTopBarColor(nivel)}`} />
                 {/* Encabezado nivel */}
                 <div className="flex items-center justify-between w-full px-1 mb-1 text-center">
                   {nivel > 1 ? (

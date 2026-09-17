@@ -74,15 +74,11 @@ export function MiPlanWarningModal({
 
           <div className="space-y-3 mb-6">
             <p className="text-sm text-secondary leading-relaxed font-medium">
-              Al agregar <span className="font-bold text-primary">"{nombreMateria}"</span>, la
-              carga horaria semanal ascenderá a{' '}
-              <span className="text-amber-400 font-bold">{horasResultantes} hs/semana</span> en
-              este período.
+              Al agregar <span className="font-bold text-primary">"{nombreMateria}"</span>, la carga semanal será de{' '}
+              <span className="text-amber-400 font-bold">{horasResultantes} hs</span>.
             </p>
             <div className="p-3.5 rounded-xl bg-status-regularized-soft border border-status-regularized text-xs text-status-regularized leading-relaxed">
-              <span className="font-bold">Nota de Asesoramiento:</span> Si trabajas full-time
-              (8hs diarias), sostener más de 16hs semanales de cursada presencial más horas de
-              estudio resulta sumamente desafiante. ¿Estás seguro de agregarla de todos modos?
+              <span className="font-bold">Nota:</span> Si trabajas part-time, superar las 26hs semanales de cursada presencial es un gran desafío. ¿Seguro que deseas agregarla de todos modos?
             </div>
           </div>
 

@@ -169,7 +169,7 @@ export function Header({ vistaActual, onCambiarVista }: Props) {
             <div className="w-8 h-8 flex items-center justify-center bg-white p-1.5 rounded-lg">
               <img src={logoUTN} alt="UTN" className="w-full h-full object-contain filter brightness-0" />
             </div>
-            <span className="font-bold text-sm text-slate-900 dark:text-white">Sistemas</span>
+            <span className="font-bold text-sm text-slate-900 dark:text-white">UTN FRBA | Ing. en Sistemas</span>
           </div>
           
           {/* Menu Toggle */}

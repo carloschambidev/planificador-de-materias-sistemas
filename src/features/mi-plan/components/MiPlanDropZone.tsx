@@ -1,10 +1,9 @@
 // ============================================================
 // COMPONENTE: MiPlanDropZone
-// Zona de asignación por período (Anual, 1C, 2C) con indicador de carga horaria y validación visual por selección
+// Zona de asignación por período (Anual, 1C, 2C) minimalista
 // ============================================================
 
-import { EyeOff } from 'lucide-react';
-import { MiPlanCard } from "../../../features/mi-plan/components/MiPlanCard";
+import { X, ChevronDown } from 'lucide-react';
 import type { MateriaCompleta, PeriodoPlan } from "../../../core/types";
 import type { AlertaCorrelativa, TermometroConfig } from "../../../features/mi-plan/hooks/usePlanificador";
 
@@ -18,7 +17,8 @@ interface Props {
   onSelectMateria: (materia: MateriaCompleta) => void;
   onAsignarMateria: (idMateria: string, anio: number, periodo: PeriodoPlan) => void;
   onRemoveMateria: (idMateria: string) => void;
-  onHide?: () => void;
+  isCollapsed: boolean;
+  onToggle: () => void;
 }
 
 const PERIODO_LABEL: Record<PeriodoPlan, string> = {
@@ -36,13 +36,13 @@ export function MiPlanDropZone({
   onSelectMateria,
   onAsignarMateria,
   onRemoveMateria,
-  onHide,
+  isCollapsed,
+  onToggle,
 }: Props) {
   const duracionEfectiva = materiaSeleccionada
     ? (materiaSeleccionada.estadoDinamico.duracionPersonalizada ?? materiaSeleccionada.duracion)
     : undefined;
 
-  // Validación en tiempo real cuando hay una materia seleccionada
   const esInvalido =
     Boolean(materiaSeleccionada) &&
     ((periodo === 'Anual' && duracionEfectiva === 'cuatrimestral') ||
@@ -50,118 +50,98 @@ export function MiPlanDropZone({
 
   const esCompatible = Boolean(materiaSeleccionada) && !esInvalido;
 
+  let actionStateContent = '+ Asignar a este período';
+  let actionStateClasses = 'border-slate-800/80 hover:border-slate-700 text-slate-400';
+
+  if (esCompatible) {
+    actionStateContent = '+ Soltar aquí';
+    actionStateClasses = 'border-emerald-500/50 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 font-semibold cursor-pointer animate-pulse';
+  } else if (esInvalido) {
+    actionStateContent = '🚫 No compatible';
+    actionStateClasses = 'border-rose-900/50 bg-rose-950/20 text-rose-500/70 font-semibold cursor-not-allowed';
+  }
+
   return (
-    <div
-      onClick={() => {
-        if (materiaSeleccionada && items.length === 0) {
-          onAsignarMateria(materiaSeleccionada.id, anio, periodo);
-        }
-      }}
-      className={`rounded-2xl transition-all p-3.5 flex flex-col min-h-[160px] ${
-        esInvalido
-          ? 'border-2 border-dashed border-red-900/50 bg-red-950/10 text-red-500/70 cursor-not-allowed'
-          : esCompatible
-          ? 'border-2 border-dashed border-emerald-500/50 bg-emerald-950/20 text-emerald-400 scale-[1.01] cursor-pointer'
-          : 'border border-dashed border-[var(--color-border-sutil)] bg-background hover:border-[var(--color-border-main)]'
-      }`}
-    >
-      {/* Encabezado del Período */}
-      <div className="flex justify-between items-center w-full mb-3 pb-2 border-b border-sutil">
-        <span className="text-[11px] font-bold uppercase tracking-wider text-secondary/70">
-          {PERIODO_LABEL[periodo]}
-        </span>
-        
-        <div className="flex items-center gap-2">
-          {esInvalido && (
-            <span className="text-[10px] font-bold text-red-400 bg-red-950/30 px-2 py-0.5 rounded border border-red-900/50">
-              {periodo === 'Anual' ? 'Solo Anuales' : 'Solo Cuatrim.'}
-            </span>
-          )}
+    <div className="flex flex-col">
+      {/* Encabezado Colapsable Compacto */}
+      <div 
+        onClick={onToggle}
+        className="flex items-center justify-between py-1.5 px-2.5 rounded-md bg-blue-600/20 text-blue-600 dark:bg-blue-500/20 dark:text-blue-300 dark:border-blue-500/30 text-[10px] font-bold uppercase tracking-widest cursor-pointer select-none transition-colors"
+      >
+        <span>{PERIODO_LABEL[periodo]}</span>
+        <div className="flex items-center gap-1.5 opacity-90">
+          <span className="font-mono">({items.length})</span>
+          <ChevronDown size={13} className={`transition-transform duration-200 ${isCollapsed ? '-rotate-90' : ''}`} />
+        </div>
+      </div>
 
-          {periodo === 'Anual' && items.length > 0 && !esInvalido && (
-            <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-surface text-secondary/60 border border-sutil">
-              {items.length} {items.length === 1 ? 'materia' : 'materias'}
-            </span>
-          )}
+      {/* Contenido (Lista de Materias y Drop Target) */}
+      {!isCollapsed && (
+        <div className="flex flex-col gap-1.5 mt-2">
+          {items.map((materia) => {
+            const alerta = getAlertaCorrelativas(materia.id, anio, periodo);
+            const tieneAlerta = alerta.faltaCorrelativa;
+            
+            return (
+              <div 
+                key={materia.id}
+                className={`group relative p-2 rounded-xl flex items-center justify-between gap-2 transition-all border shadow-sm cursor-pointer ${
+                  materiaSeleccionada?.id === materia.id 
+                    ? 'bg-blue-600/30 border-blue-400 text-white shadow-[0_0_12px_rgba(59,130,246,0.3)]'
+                    : tieneAlerta 
+                      ? 'bg-amber-50 dark:bg-slate-900/60 hover:bg-amber-100 dark:hover:bg-slate-800/80 border-amber-300 dark:border-amber-500/50 text-amber-800 dark:text-slate-200' 
+                      : 'bg-white dark:bg-slate-900/60 hover:bg-slate-50 dark:hover:bg-slate-800/80 border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-200'
+                }`}
+                onClick={() => onSelectMateria(materia)}
+              >
+                <div className="flex items-center gap-2 min-w-0">
+                  <span className={`font-mono font-black text-[10px] px-1.5 py-0.5 rounded shrink-0 ${
+                    tieneAlerta ? 'bg-amber-200 text-amber-900 dark:bg-amber-500/20 dark:text-amber-400' : 'bg-slate-600 text-white dark:bg-slate-700/80 dark:text-slate-100'
+                  }`}>
+                    {materia.codigo}
+                  </span>
+                  <span className="text-xs font-semibold truncate" title={tieneAlerta ? alerta.motivos.join(', ') : materia.nombre}>
+                    {materia.nombre}
+                  </span>
+                </div>
 
-          {onHide && (
-            <button
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                onHide();
+                <div className="flex items-center gap-1 shrink-0">
+                  <span className="text-[10px] font-mono text-slate-400">{materia.horas}</span>
+                  {/* Botón quitar en hover */}
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onRemoveMateria(materia.id);
+                    }}
+                    className="opacity-0 group-hover:opacity-100 p-1 hover:text-rose-400 transition-all ml-1"
+                    title="Quitar de este período"
+                  >
+                    <X size={12} />
+                  </button>
+                </div>
+              </div>
+            );
+          })}
+
+          {/* Empty State / Drop Target */}
+          {(items.length === 0 || Boolean(materiaSeleccionada)) && (
+            <div
+              onClick={() => {
+                if (esCompatible && materiaSeleccionada) {
+                  onAsignarMateria(materiaSeleccionada.id, anio, periodo);
+                }
               }}
-              title="Ocultar cuatrimestre (solo si está vacío)"
-              className="text-secondary/40 hover:text-primary transition-colors ml-1"
+              className={
+                items.length === 0 && !materiaSeleccionada
+                  ? "w-full py-2 px-3 rounded-xl border border-dashed border-slate-800/80 hover:border-blue-500/40 text-center text-[11px] text-slate-500 hover:text-blue-300 transition-all cursor-pointer"
+                  : `w-full py-2 px-3 rounded-xl border border-dashed text-center text-[11px] transition-all ${actionStateClasses}`
+              }
             >
-              <EyeOff size={14} />
-            </button>
+              <span>{items.length === 0 && !materiaSeleccionada ? "+ Asignar materia aquí" : actionStateContent}</span>
+            </div>
           )}
         </div>
-      </div>
-
-      {/* Botón de acción rápido si hay materia compatible seleccionada */}
-      {esCompatible && (
-        <button
-          type="button"
-          onClick={(e) => {
-            e.stopPropagation();
-            if (materiaSeleccionada) {
-              onAsignarMateria(materiaSeleccionada.id, anio, periodo);
-            }
-          }}
-          className="w-full py-2 px-3 mb-2 rounded-xl bg-brand hover:bg-brand-hover text-white font-bold text-xs flex items-center justify-center gap-1.5 transition-all hover:scale-[1.02] active:scale-[0.98] border border animate-pulse"
-        >
-          ➕ Ubicar "{materiaSeleccionada?.codigo}" aquí
-        </button>
       )}
-
-      {/* Botón informativo si hay materia seleccionada no compatible */}
-      {esInvalido && (
-        <div
-          onClick={(e) => {
-            e.stopPropagation();
-            if (materiaSeleccionada) {
-              onAsignarMateria(materiaSeleccionada.id, anio, periodo);
-            }
-          }}
-          className="w-full py-1.5 px-2.5 mb-2 rounded-lg bg-[#2a0505] border border-rose-700 text-rose-300 text-[11px] font-medium text-center cursor-pointer hover:bg-[#3a0808] transition-colors"
-        >
-          🚫 No compatible ({materiaSeleccionada?.duracion === 'anual' ? 'es Anual' : 'es Cuatrim.'})
-        </div>
-      )}
-
-      {/* Tarjetas dentro de la zona */}
-      <div className="space-y-2 flex-1 flex flex-col justify-center">
-        {items.length === 0 ? (
-          <div
-            onClick={() => {
-              if (materiaSeleccionada) {
-                onAsignarMateria(materiaSeleccionada.id, anio, periodo);
-              }
-            }}
-            className={`h-full min-h-[85px] flex items-center justify-center rounded-xl border border-dashed transition-colors text-xs font-medium ${
-              esCompatible
-                ? 'border-[#951615] bg-surface-hover text-secondary cursor-pointer hover:bg-background font-bold'
-                : 'border bg-background text-secondary/50'
-            }`}
-          >
-            {esCompatible ? '👆 Clic para ubicar aquí' : 'Haz clic en una materia para seleccionarla'}
-          </div>
-        ) : (
-          items.map((materia) => (
-            <MiPlanCard
-              key={materia.id}
-              materia={materia}
-              enTablero={true}
-              isSelected={materiaSeleccionada?.id === materia.id}
-              alertaCorrelativa={getAlertaCorrelativas(materia.id, anio, periodo)}
-              onSelect={() => onSelectMateria(materia)}
-              onRemove={() => onRemoveMateria(materia.id)}
-            />
-          ))
-        )}
-      </div>
     </div>
   );
 }
