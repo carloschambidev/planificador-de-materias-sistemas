@@ -4,7 +4,7 @@
 // ============================================================
 
 import { useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronDown } from 'lucide-react';
 import type { MateriaCompleta } from '../../../core/types';
 import { NIVELES_NOMBRES } from '../../../core/types';
@@ -100,27 +100,33 @@ export function NivelSection({ nivel, materias, onClickMateria }: Props) {
       </div>
 
       {/* Grid de materias */}
-      <div 
-        className={`overflow-hidden transition-all duration-300 ease-in-out ${
-          isExpanded ? 'max-h-[5000px] opacity-100 mt-5' : 'max-h-0 opacity-0 mt-0'
-        }`}
-      >
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
-          {materias.map((materia, i) => (
-            <motion.div
-              key={materia.id}
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: i * 0.04, duration: 0.3 }}
-            >
-              <MateriaCard
-                materia={materia}
-                onClick={() => onClickMateria(materia)}
-              />
-            </motion.div>
-          ))}
-        </div>
-      </div>
+      <AnimatePresence initial={false}>
+        {isExpanded && (
+          <motion.div
+            initial={{ height: 0, opacity: 0, marginTop: 0 }}
+            animate={{ height: 'auto', opacity: 1, marginTop: 20 }}
+            exit={{ height: 0, opacity: 0, marginTop: 0 }}
+            transition={{ duration: 0.3, ease: 'easeInOut' }}
+            className="overflow-hidden"
+          >
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 pb-2 pt-1">
+              {materias.map((materia, i) => (
+                <motion.div
+                  key={materia.id}
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: i * 0.03, duration: 0.25 }}
+                >
+                  <MateriaCard
+                    materia={materia}
+                    onClick={() => onClickMateria(materia)}
+                  />
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </motion.section>
   );
 }
