@@ -124,7 +124,7 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-[#050505] text-slate-900 dark:text-slate-50 font-sans relative transition-colors duration-300">
+    <div className="min-h-screen overflow-x-hidden w-full max-w-[100vw] bg-slate-50 dark:bg-[#050505] text-slate-900 dark:text-slate-50 font-sans relative transition-colors duration-300">
       
       {/* Ambient Glow (Dark Mode Only) */}
       <div className="hidden dark:block fixed inset-0 z-0 overflow-hidden pointer-events-none">

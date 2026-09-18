@@ -114,7 +114,8 @@ export function NivelSection({ nivel, materias, onClickMateria }: Props) {
                 <motion.div
                   key={materia.id}
                   initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  viewport={{ once: true, margin: "50px" }}
                   transition={{ delay: i * 0.03, duration: 0.25 }}
                 >
                   <MateriaCard

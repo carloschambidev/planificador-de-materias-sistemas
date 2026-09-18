@@ -68,7 +68,7 @@ export function MateriaCard({ materia, onClick }: Props) {
       whileHover={estaBloqueada ? {} : { y: -4 }}
       whileTap={{ scale: 0.98 }}
       onClick={onClick}
-      className={`relative h-full flex flex-col gap-2 p-4 bg-white dark:bg-white/[0.03] dark:backdrop-blur-xl border border-slate-200 dark:border-white/[0.08] rounded-xl shadow-sm dark:shadow-none transition-colors duration-200 ${hoverClass}`}
+      className={`relative h-full flex flex-col gap-2 p-4 bg-white dark:bg-white/[0.03] dark:backdrop-blur-xl border border-slate-200 dark:border-white/[0.08] rounded-xl shadow-sm dark:shadow-none transition-colors duration-200 transform-gpu will-change-transform ${hoverClass}`}
     >
       <div className="absolute top-4 right-4">
         {iconElement}
@@ -87,7 +87,7 @@ export function MateriaCard({ materia, onClick }: Props) {
         {/* Nombre */}
         <div className="flex items-center gap-2">
           <h3
-            className={`text-sm leading-tight font-semibold pr-4 ${
+            className={`text-sm leading-tight break-words whitespace-normal font-semibold pr-4 ${
               estaBloqueada ? 'text-slate-400 dark:text-slate-500' : 'text-slate-900 dark:text-slate-100'
             }`}
           >
