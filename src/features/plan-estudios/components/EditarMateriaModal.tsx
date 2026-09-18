@@ -57,26 +57,24 @@ export function EditarMateriaModal({ materia, onClose }: Props) {
   return (
     <AnimatePresence>
       <motion.div
-        className="fixed inset-0 z-[60] flex items-center justify-center p-4"
+        className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm overflow-y-auto"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
+        onClick={onClose}
       >
-        <div
-          className="absolute inset-0 bg-black/80 backdrop-blur-sm"
-          onClick={onClose}
-        />
 
         <motion.div
+          onClick={(e) => e.stopPropagation()}
           initial={{ opacity: 0, scale: 0.9, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.9, y: 20 }}
           transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-          className="relative w-full max-w-md bg-gray-900 border border-indigo-800/50 rounded-2xl shadow-2xl overflow-hidden z-10"
+          className="relative w-full max-w-md bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh] my-auto text-slate-100"
         >
           {/* Header */}
-          <div className="px-6 pt-6 pb-4 border-b border-gray-800">
-            <div className="flex items-center justify-between">
+          <div className="p-5 pb-3 border-b border-slate-800 flex items-start justify-between shrink-0">
+            <div className="flex w-full items-center justify-between">
               <div>
                 <h2 className="text-lg font-bold text-white">Editar materia</h2>
                 <p className="text-sm text-gray-400 mt-0.5">
@@ -94,7 +92,7 @@ export function EditarMateriaModal({ materia, onClose }: Props) {
           </div>
 
           {/* Body */}
-          <div className="px-6 py-5 space-y-5">
+          <div className="p-5 overflow-y-auto flex flex-col gap-4">
             {/* Nombre */}
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-2">

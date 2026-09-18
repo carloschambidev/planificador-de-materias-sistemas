@@ -40,32 +40,28 @@ export function MateriaModal({ materia, estadosDisponibles, onClose, onEditar }:
     <AnimatePresence>
       <motion.div
         key="backdrop"
-        className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4"
+        className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm overflow-y-auto"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
+        onClick={onClose}
       >
-        {/* Backdrop */}
-        <div
-          className="absolute inset-0 bg-black/70 backdrop-blur-sm"
-          onClick={onClose}
-        />
-
         {/* Modal */}
         <motion.div
           key="modal"
+          onClick={(e) => e.stopPropagation()}
           initial={{ opacity: 0, scale: 0.9, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.9, y: 20 }}
           transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-          className={`relative w-full ${muchosRequisitos ? 'max-w-3xl md:max-w-4xl' : 'max-w-lg'} bg-gray-900 border border-gray-700 rounded-2xl shadow-2xl overflow-y-auto max-h-[90vh] z-10`}
+          className={`relative w-full ${muchosRequisitos ? 'max-w-3xl md:max-w-4xl' : 'max-w-md'} bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh] my-auto text-slate-100`}
           style={{
             boxShadow: `0 25px 60px rgba(0,0,0,0.5), 0 0 40px ${cfgActual.glowColor}`,
           }}
         >
-          {/* Header gradient */}
+          {/* Cabecera fija */}
           <div
-            className="px-6 pt-6 pb-4"
+            className="p-5 pb-3 border-b border-slate-800 shrink-0"
             style={{
               background: `linear-gradient(135deg, ${cfgActual.color}22 0%, transparent 60%)`,
             }}
@@ -106,36 +102,26 @@ export function MateriaModal({ materia, estadosDisponibles, onClose, onEditar }:
 
             {/* Estado actual */}
             <div className="mt-4 flex items-center gap-2">
-              <span
-                className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-semibold"
-                style={{ backgroundColor: cfgActual.color + '33', color: cfgActual.color, border: `1px solid ${cfgActual.color}55` }}
-              >
-                <span>{cfgActual.icon}</span>
-                <span>{cfgActual.label}</span>
-              </span>
+              {estaBloqueada ? (
+                <div className="flex items-center gap-2 bg-rose-500/10 text-rose-400 border border-rose-500/20 px-3 py-1.5 rounded-lg w-fit text-sm font-bold mt-1">
+                  <Lock size={16} />
+                  <span>Bloqueada</span>
+                </div>
+              ) : (
+                <span
+                  className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-semibold mt-1 w-fit"
+                  style={{ backgroundColor: cfgActual.color + '33', color: cfgActual.color, border: `1px solid ${cfgActual.color}55` }}
+                >
+                  <span>{cfgActual.icon}</span>
+                  <span>{cfgActual.label}</span>
+                </span>
+              )}
             </div>
           </div>
 
-          <div className="px-6 pb-6 space-y-5">
-            {/* Bloqueo */}
-            {estaBloqueada && (
-              <div className="flex items-start gap-3 p-3.5 rounded-xl bg-red-900/20 border border-red-800/50">
-                <Lock size={16} className="text-red-400 mt-0.5 shrink-0" />
-                <div className="w-full">
-                  <p className="text-sm font-semibold text-red-300 mb-2">
-                    Materia bloqueada — Requisitos pendientes ({motivoBloqueo.length})
-                  </p>
-                  <ul className={`grid gap-x-4 gap-y-1 ${muchosRequisitos ? 'grid-cols-1 sm:grid-cols-2 md:grid-cols-3 text-[11px]' : 'grid-cols-1 text-xs'}`}>
-                    {motivoBloqueo.map((motivo, i) => (
-                      <li key={i} className="text-red-400 flex items-start gap-1 leading-tight">
-                        <span className="mt-0.5 shrink-0">•</span>
-                        <span>{motivo}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
-            )}
+          {/* Cuerpo con scroll */}
+          <div className="p-5 overflow-y-auto flex flex-col gap-4">
+
 
             {/* Cambiar estado */}
             {!estaBloqueada && (
@@ -218,11 +204,11 @@ function CorrelativiadadesSection({ materia }: { materia: MateriaCompleta }) {
   if (!tieneReqs) return null;
 
   return (
-    <div>
-      <h3 className="text-sm font-semibold text-gray-300 mb-3">
+    <div className="bg-slate-800/20 border border-slate-700/50 p-4 rounded-xl">
+      <h3 className="text-sm font-semibold text-gray-300 mb-4">
         {materia.tituloRequisitos ?? 'Correlatividades y Requisitos'}
       </h3>
-      <div className="space-y-3">
+      <div className="space-y-4">
         {materia.requisitoAdicional && (
           <div className="p-3.5 rounded-xl bg-purple-950/70 border border-purple-500/60 text-purple-200 shadow-lg shadow-purple-950/30">
             <p className="text-[11px] font-bold uppercase tracking-wider text-purple-300 mb-1.5 flex items-center gap-1.5">
@@ -235,14 +221,14 @@ function CorrelativiadadesSection({ materia }: { materia: MateriaCompleta }) {
         )}
         {materia.regularizadasRequeridas.length > 0 && (
           <div>
-            <p className="text-xs text-gray-500 mb-1.5 uppercase tracking-wide">
+            <p className="text-xs text-gray-500 mb-2 uppercase tracking-wide">
               Para cursar (regularizadas) ({materia.regularizadasRequeridas.length}):
             </p>
-            <div className="flex flex-wrap gap-1.5">
+            <div className="flex flex-wrap gap-2">
               {materia.regularizadasRequeridas.map((id) => {
                 const def = getMateriaById(id);
                 return (
-                  <span key={id} className="text-[11px] px-2 py-0.5 rounded-md bg-amber-900/30 border border-amber-700/50 text-amber-300">
+                  <span key={id} className="bg-amber-500/10 text-amber-400 border border-amber-500/30 px-2 py-1 rounded-md text-xs font-medium">
                     {def?.nombre ?? id}
                   </span>
                 );
@@ -252,14 +238,14 @@ function CorrelativiadadesSection({ materia }: { materia: MateriaCompleta }) {
         )}
         {materia.aprobadasRequeridas.length > 0 && (
           <div>
-            <p className="text-xs text-gray-500 mb-1.5 uppercase tracking-wide">
+            <p className="text-xs text-gray-500 mb-2 uppercase tracking-wide">
               Para cursar (aprobadas) ({materia.aprobadasRequeridas.length}):
             </p>
-            <div className="flex flex-wrap gap-1.5">
+            <div className="flex flex-wrap gap-2">
               {materia.aprobadasRequeridas.map((id) => {
                 const def = getMateriaById(id);
                 return (
-                  <span key={id} className="text-[11px] px-2 py-0.5 rounded-md bg-green-900/30 border border-green-700/50 text-green-300">
+                  <span key={id} className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 px-2 py-1 rounded-md text-xs font-medium">
                     {def?.nombre ?? id}
                   </span>
                 );
