@@ -3,6 +3,7 @@
 // Tarjeta individual para cada materia del plan de estudios
 // ============================================================
 
+import { memo } from 'react';
 import { motion } from 'framer-motion';
 import { BookOpen, ChevronRight, Clock, Star, Check, Diamond, CircleDot, Circle, Lock } from 'lucide-react';
 import type { MateriaCompleta } from "../../../core/types";
@@ -23,10 +24,10 @@ function formatCorrelativasLista(ids: string[], maxVisible = 3): string {
 
 interface Props {
   materia: MateriaCompleta;
-  onClick: () => void;
+  onClick: (materia: MateriaCompleta) => void;
 }
 
-export function MateriaCard({ materia, onClick }: Props) {
+export const MateriaCard = memo(({ materia, onClick }: Props) => {
   const { estadoDinamico, estaBloqueada, motivoBloqueo } = materia;
   const estado = estadoDinamico.estado;
   const cfg = estaBloqueada ? BLOQUEADA_CONFIG : ESTADO_CONFIG[estado];
@@ -67,7 +68,7 @@ export function MateriaCard({ materia, onClick }: Props) {
     <motion.div
       whileHover={estaBloqueada ? {} : { y: -4 }}
       whileTap={{ scale: 0.98 }}
-      onClick={onClick}
+      onClick={() => onClick(materia)}
       className={`relative h-full flex flex-col gap-2 p-4 bg-white dark:bg-white/[0.03] dark:backdrop-blur-xl border border-slate-200 dark:border-white/[0.08] rounded-xl shadow-sm dark:shadow-none transition-colors duration-200 transform-gpu will-change-transform ${hoverClass}`}
     >
       <div className="absolute top-4 right-4">
@@ -174,4 +175,4 @@ export function MateriaCard({ materia, onClick }: Props) {
 
     </motion.div>
   );
-}
+});

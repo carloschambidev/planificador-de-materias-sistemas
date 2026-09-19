@@ -3,7 +3,7 @@
 // Sección con el título del nivel y grid de tarjetas
 // ============================================================
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronDown } from 'lucide-react';
 import type { MateriaCompleta } from '../../../core/types';
@@ -42,11 +42,14 @@ const getPillHoverColor = (nivel: number) => {
 export function NivelSection({ nivel, materias, onClickMateria }: Props) {
   const [isExpanded, setIsExpanded] = useState(false);
 
-  const aprobadas = materias.filter(
-    (m) => m.estadoDinamico.estado === 'aprobada' || m.estadoDinamico.estado === 'promocionada'
-  ).length;
-  const total = materias.length;
-  const porcentaje = total > 0 ? (aprobadas / total) * 100 : 0;
+  const { aprobadas, total, porcentaje } = useMemo(() => {
+    const aprobadasCount = materias.filter(
+      (m) => m.estadoDinamico.estado === 'aprobada' || m.estadoDinamico.estado === 'promocionada'
+    ).length;
+    const totalCount = materias.length;
+    const porc = totalCount > 0 ? (aprobadasCount / totalCount) * 100 : 0;
+    return { aprobadas: aprobadasCount, total: totalCount, porcentaje: porc };
+  }, [materias]);
 
   const { bgClass } = getProgressColor(porcentaje);
 
@@ -120,7 +123,7 @@ export function NivelSection({ nivel, materias, onClickMateria }: Props) {
                 >
                   <MateriaCard
                     materia={materia}
-                    onClick={() => onClickMateria(materia)}
+                    onClick={onClickMateria}
                   />
                 </motion.div>
               ))}
